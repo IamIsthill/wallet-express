@@ -17,13 +17,13 @@ export class Account {
     getTransactions(): Transaction[] {
         return [...this.transactions]
     }
+    
 
     public deposit(amount: number): Transaction {
         const amt = Amount.create(amount)
         this.increaseBalance(amt)
 
-        const transaction = this.createTransaction(TransactionType.income(), amt, this.id)
-        this.transactions.push(transaction)
+        const transaction = this.createTransaction(TransactionType.income(), amt)
         return transaction
     }
 
@@ -31,27 +31,22 @@ export class Account {
         const amt = Amount.create(amount)
         this.decreaseBalance(amt)
 
-        const transaction = this.createTransaction(TransactionType.expense(), amt)
-        return transaction
+        return this.createTransaction(TransactionType.expense(), amt)
     }
 
     public transferFunds(amount:number, targetAccountId: string) {
-        if (this.id === targetAccountId) {
-            throw new Error('Transferring to the same account is not allowed');
-        }
+        this.ensureDifferentAccounts(targetAccountId)
         const amt = Amount.create(amount)
         this.decreaseBalance(amt)
 
-        const transaction = this.createTransaction(TransactionType.transfer(), amt, targetAccountId)
-        return transaction
+        return this.createTransaction(TransactionType.transfer(), amt, targetAccountId)
     }
 
     public recieveTransfer(amount: number, sourceAccountId: string): Transaction {
         const amt = Amount.create(amount)
         this.increaseBalance(amt)
 
-        const transaction = this.createTransaction(TransactionType.transfer(), amt, sourceAccountId)
-        return transaction
+        return this.createTransaction(TransactionType.transfer(), amt, sourceAccountId)
     }
 
 
@@ -60,23 +55,40 @@ export class Account {
         if(!transactionToUpdate) {
             return undefined
         }
-        if(newType.equals(TransactionType.transfer())) {
-            if(!targetTransferAccountId) {
-                throw new Error('Target transfer account id must be set for transfer transactions')
-            }
-            transactionToUpdate.targetAccountId = targetTransferAccountId
+        return this.updateTransactionType(transactionToUpdate, newType, targetTransferAccountId)
+    }
 
-        } else {
-            transactionToUpdate.targetAccountId = undefined
-        }
+    private updateTransactionType(transactionToUpdate: Transaction, newType: TransactionType, targetTransferAccountId?: string){
+        transactionToUpdate.targetAccountId = undefined
+
+        if(newType.equals(TransactionType.transfer())) {
+            this.ensureTargetProvided(targetTransferAccountId)
+            this.ensureDifferentAccounts(targetTransferAccountId!)
+            transactionToUpdate.targetAccountId = targetTransferAccountId
+        } 
+
         transactionToUpdate.type = newType
         return transactionToUpdate
+    }
+
+    private ensureDifferentAccounts(targetAccountId: string){
+        if (this.id === targetAccountId) {
+            throw new Error('Transferring to the same account is not allowed');
+        }
+    }
+    
+    private ensureTargetProvided(targetTransferAccountId?: string){
+        if(!targetTransferAccountId) {
+            throw new Error('Target transfer account id must be set for transfer transactions')
+        }
     }
 
     private findTransaction(transactionId: string): Transaction | undefined {
         const transaction = this.transactions.find(item => item.id == transactionId)
         return transaction
     }
+    
+
 
     private createTransaction(type: TransactionType, amount: Amount, targetAccountId?:string) {
         const transaction = new Transaction(v4(), type, amount, this.id, targetAccountId)
