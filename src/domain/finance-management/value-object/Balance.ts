@@ -1,11 +1,12 @@
 import { Amount } from "./Amount"
+import { InsufficientFundsError, NegativeBalanceError } from "../../shared/errors"
 
 export class Balance {
     private constructor(private readonly _value: number) {}
 
     static create(value: number): Balance {
         if (value < 0) {
-            throw new Error('Balance cannot be less than zero')
+            throw new NegativeBalanceError()
         }
         return new Balance(value)
     }
@@ -20,7 +21,7 @@ export class Balance {
 
     decrease(amount: Amount): Balance {
         if (this._value < amount.value) {
-            throw new Error('Insufficient funds')
+            throw new InsufficientFundsError
         }
         return new Balance(this._value - amount.value)
     }

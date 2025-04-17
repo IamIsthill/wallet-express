@@ -1,3 +1,4 @@
+import { InvalidTransferTargetError, MissingTargetAccountError } from "../../shared/errors";
 import { Transaction } from "../entities";
 import { TransactionType, Amount, Balance } from "../value-object";
 import { v4 } from "uuid";
@@ -73,13 +74,13 @@ export class Account {
 
     private ensureDifferentAccounts(targetAccountId: string){
         if (this.id === targetAccountId) {
-            throw new Error('Transferring to the same account is not allowed');
+            throw new InvalidTransferTargetError
         }
     }
     
     private ensureTargetProvided(targetTransferAccountId?: string){
         if(!targetTransferAccountId) {
-            throw new Error('Target transfer account id must be set for transfer transactions')
+            throw new MissingTargetAccountError
         }
     }
 

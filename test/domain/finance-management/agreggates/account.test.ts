@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { Account, Balance, TransactionType } from '../../../../src/domain/finance-management'
+import { InsufficientFundsError, InvalidTransferTargetError, MissingTargetAccountError, TargetAccountNotAllowedError } from '../../../../src/domain/shared/errors'
 
 describe('Account', () => {
   it('should initialize with correct properties', () => {
@@ -34,7 +35,7 @@ describe('Account', () => {
   it('should throw error when withdrawing more than balance', () => {
     const account = new Account('1', 'Test', Balance.create(100))
 
-    expect(() => account.withdraw(200)).toThrow('Insufficient funds')
+    expect(() => account.withdraw(200)).toThrow(InsufficientFundsError)
   })
 
   it('should transfer funds to another account', () => {
@@ -49,7 +50,7 @@ describe('Account', () => {
   it('should throw when transferring to the same account', () => {
     const account = new Account('1', 'Self', Balance.create(500))
 
-    expect(() => account.transferFunds(100, '1')).toThrow('Transferring to the same account is not allowed')
+    expect(() => account.transferFunds(100, '1')).toThrow(InvalidTransferTargetError)
   })
 
   it('should receive transfer and increase balance', () => {
@@ -81,9 +82,7 @@ describe('Account', () => {
     const account = new Account('1', 'Test', Balance.create(500))
     const tx = account.deposit(100)
 
-    expect(() => account.changeTransactionTypeOf(tx.id, TransactionType.transfer())).toThrow(
-      'Target transfer account id must be set for transfer transactions'
-    )
+    expect(() => account.changeTransactionTypeOf(tx.id, TransactionType.transfer())).toThrow(MissingTargetAccountError)
   })
 
 

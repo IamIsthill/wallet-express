@@ -1,4 +1,5 @@
 import { TransactionType, Amount } from "../value-object"
+import { MissingTargetAccountError, TargetAccountNotAllowedError } from "../../shared/errors"
 
 export class Transaction {
     public readonly id: string
@@ -14,11 +15,11 @@ export class Transaction {
         accountId: string,
         targetAccountId?: string
     ) {
-        if (type.value === 'transfer' && !targetAccountId) {
-            throw new Error("Transfer transaction must have a targetAccountId");
+        if (type.equals(TransactionType.transfer()) && !targetAccountId) {
+            throw new MissingTargetAccountError();
         }
         if (type.value !== 'transfer' && targetAccountId) {
-            throw new Error("Only transfer transactions can have a targetAccountId");
+            throw new TargetAccountNotAllowedError()
         }
 
         this.id = id;

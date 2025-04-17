@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Amount } from '../../../../src/domain/finance-management'
+import { InvalidAmountError } from '../../../../src/domain/shared/errors'
 
 describe('Amount', () => {
   it('should create a valid Amount instance', () => {
@@ -8,8 +9,8 @@ describe('Amount', () => {
   })
 
   it('should throw error for zero or negative values', () => {
-    expect(() => Amount.create(0)).toThrow('Amount must be greater than zero')
-    expect(() => Amount.create(-50)).toThrow('Amount must be greater than zero')
+    expect(() => Amount.create(0)).toThrow(InvalidAmountError)
+    expect(() => Amount.create(-50)).toThrow(InvalidAmountError)
   })
 
   it('should consider amounts with same value equal', () => {

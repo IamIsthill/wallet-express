@@ -1,7 +1,9 @@
+import { InvalidAmountError } from "../../shared/errors"
+
 export class Amount {
     private constructor(private readonly _value: number) {
         if(_value <= 0) {
-            throw new Error('Amount must be greater than zero')
+            throw new InvalidAmountError()
         }
     }
 
