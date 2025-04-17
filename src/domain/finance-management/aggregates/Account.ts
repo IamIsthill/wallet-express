@@ -1,17 +1,14 @@
-import { Transaction } from "../entities/Transaction";
-import { TransactionType, Amount } from "../value-object";
+import { Transaction } from "../entities";
+import { TransactionType, Amount, Balance } from "../value-object";
 import { v4 } from "uuid";
 
 export class Account {
     public id: string
     public name: string;
-    public balance: number;
+    public balance: Balance;
     public transactions: Transaction[] = []
 
-    constructor(id:string, name: string, balance:number=0) {
-        if(balance < 0) {
-            throw new Error('Balance cannot be negative')
-        }
+    constructor(id:string, name: string, balance:Balance) {
         this.id = id
         this.name = name;
         this.balance = balance;
@@ -25,15 +22,12 @@ export class Account {
         const amt = Amount.create(amount)
         this.increaseBalance(amt)
 
-        const transaction = new Transaction(v4(), TransactionType.income(), amt, this.id)
+        const transaction = this.createTransaction(TransactionType.income(), amt, this.id)
         this.transactions.push(transaction)
         return transaction
     }
 
     public withdraw(amount:number): Transaction {
-        if(this.balance < amount) {
-            throw new Error('Current balance is insufficient')
-        }
         const amt = Amount.create(amount)
         this.decreaseBalance(amt)
 
@@ -66,7 +60,7 @@ export class Account {
         if(!transactionToUpdate) {
             return undefined
         }
-        if(newType.value == 'transfer') {
+        if(newType.equals(TransactionType.transfer())) {
             if(!targetTransferAccountId) {
                 throw new Error('Target transfer account id must be set for transfer transactions')
             }
@@ -91,14 +85,10 @@ export class Account {
     }
 
     private increaseBalance(amount: Amount) {
-        this.balance += amount.value
+        this.balance = this.balance.increase(amount)
     }
 
     private decreaseBalance(amount: Amount) {
-        if(this.balance < amount.value) {
-            throw new Error('Insufficient balance')
-        }
-
-        this.balance -= amount.value
+        this.balance = this.balance.decrease(amount)
     }
 }

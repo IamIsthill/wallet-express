@@ -1,8 +1,12 @@
 export class Amount {
-    private constructor(public readonly value: number) {
-        if(value <= 0) {
+    private constructor(private readonly _value: number) {
+        if(_value <= 0) {
             throw new Error('Amount must be greater than zero')
         }
+    }
+
+    get value() {
+        return this._value
     }
 
     static create(value: number): Amount {
