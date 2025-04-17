@@ -18,4 +18,8 @@ export class TransactionType {
     static _create(value:'income' | 'expense' | 'transfer') {
         return new TransactionType(value)
     }
+
+    equals(other:TransactionType) {
+        return other.value == this.value
+    }
 }
