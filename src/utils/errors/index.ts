@@ -1,1 +1,1 @@
-export * from './NotImplemented.js'
+export * from './NotImplemented'

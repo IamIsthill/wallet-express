@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as controller from "../controllers/accounts";
 
-const router = Router()
+export const accountRouter = Router()
 
-router.post('/', controller.addAccount)
+accountRouter.post('/', controller.addAccount)
