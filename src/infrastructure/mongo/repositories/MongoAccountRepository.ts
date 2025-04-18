@@ -1,7 +1,8 @@
 import { AccountModel } from "../models";
 import { Account, AccountRepository, Transaction } from "../../../domain/finance-management";
 import { AccountMapper } from "../mappers/AccountMapper";
-
+import mongoose from "mongoose";
+import { DatabaseError, CannotFindError } from "../../shared/errors";
 
 export class MongoAccountRepository implements AccountRepository {
     async createAccount(name: string, balance: number) {
@@ -12,14 +13,22 @@ export class MongoAccountRepository implements AccountRepository {
         })
         return AccountMapper.toAccount(mongooseAccount)
     }
+    
     async findTransactionsByAccountId(accountId: string) {
-        const mongooseAccount = await AccountModel.findById(accountId).lean()
+        try {
+            const mongooseAccount = await AccountModel.findById(accountId).lean()
 
-        if(!mongooseAccount) {
-            throw new Error('Failed to find any transaction')
+            if(!mongooseAccount) {
+                throw new CannotFindError()
+            }
+    
+            return mongooseAccount.transactions.map(transaction => AccountMapper.toTransaction(transaction))
+        } catch(err) {
+            if(err instanceof mongoose.Error) {
+                throw new DatabaseError(err.message)
+            } 
+            throw err
         }
-        const arr = mongooseAccount.transactions.map(transaction => AccountMapper.toTransaction(transaction))
-
-        return arr
+  
     }
 }
