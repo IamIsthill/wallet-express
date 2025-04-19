@@ -13,6 +13,12 @@ export class AppError extends Error {
     }
   }
 
+export class NotFoundError extends AppError {
+  constructor(message = 'Not Found') {
+    super(message, codes.NOT_FOUND)
+  }
+}
+
   export class BadRequestError extends AppError {
     constructor(message = 'Bad Request') {
       super(message, codes.BAD_REQUEST);
