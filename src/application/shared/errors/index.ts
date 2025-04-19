@@ -8,3 +8,16 @@ export class ServiceError extends Error{
 
     }
 }
+
+export class AccountNotFoundError extends ServiceError {
+    constructor(accountId: string) {
+        super(`Account with ${accountId} as id was not found`)
+        this.name = 'AccountNotFoundError'
+    }
+}
+
+export class UnknownServiceError extends ServiceError {
+    constructor(err: unknown) {
+        super(`Unknown error in service layer`, {cause: err})
+    }
+}
