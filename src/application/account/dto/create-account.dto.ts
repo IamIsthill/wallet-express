@@ -1,6 +1,6 @@
 export class CreateAccountDto {
-    constructor (
-        public name: string,
-        public balance: number
-    ) {}
+  constructor(
+    public name: string,
+    public balance: number,
+  ) {}
 }

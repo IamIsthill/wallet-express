@@ -1,3 +1,3 @@
-export * from './CreateAccount'
-export * from './GetAccount'
-export * from './DepositToAccount'
+export * from "./CreateAccount";
+export * from "./GetAccount";
+export * from "./DepositToAccount";

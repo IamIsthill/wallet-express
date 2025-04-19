@@ -1,66 +1,92 @@
-import { describe, it, expect, vi, beforeEach , Mock} from 'vitest';
-import { CreateAccountDto, CreateAccountService, CreateAccountResponseDto } from '../../../../src/application/finance-management';
-import { Account, Balance } from '../../../../src/domain/finance-management';
-import { DomainError, ServiceError, DatabaseError } from '../../../../src/utils/errors';
-import { mockAccountRepository } from './setup';
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import {
+  CreateAccountDto,
+  CreateAccountService,
+  CreateAccountResponseDto,
+} from "../../../../src/application/finance-management";
+import { Account, Balance } from "../../../../src/domain/finance-management";
+import {
+  DomainError,
+  ServiceError,
+  DatabaseError,
+} from "../../../../src/utils/errors";
+import { mockAccountRepository } from "./setup";
 
-describe('CreateAccountService', () => {
-    let createAccountService: CreateAccountService;
+describe("CreateAccountService", () => {
+  let createAccountService: CreateAccountService;
 
-    beforeEach(() => {
-        // Clear all mocks before each test
-        vi.clearAllMocks();
-        createAccountService = new CreateAccountService(mockAccountRepository);
-    });
+  beforeEach(() => {
+    // Clear all mocks before each test
+    vi.clearAllMocks();
+    createAccountService = new CreateAccountService(mockAccountRepository);
+  });
 
-    it('should create an Account entity and return a CreateAccountResponseDto on success', async () => {
-        const balance = Balance.create(100)
-        const createAccountDto = new CreateAccountDto('Savings Account', 100 );
-        const mockAccount = new Account(
-            'account-id',
-            'Savings Account',
-            balance
-        );
-        (mockAccountRepository.createAccount as Mock).mockResolvedValue(mockAccount);
+  it("should create an Account entity and return a CreateAccountResponseDto on success", async () => {
+    const balance = Balance.create(100);
+    const createAccountDto = new CreateAccountDto("Savings Account", 100);
+    const mockAccount = new Account("account-id", "Savings Account", balance);
+    (mockAccountRepository.createAccount as Mock).mockResolvedValue(
+      mockAccount,
+    );
 
-        const result = await createAccountService.use(createAccountDto);
+    const result = await createAccountService.use(createAccountDto);
 
-        expect(mockAccountRepository.createAccount).toHaveBeenCalledWith(expect.objectContaining({
-            name: 'Savings Account',
-            balance: balance,
-            id: undefined
-        }));
-        expect(result).toBeInstanceOf(CreateAccountResponseDto);
-        expect(result.id).toBe('account-id');
-        expect(result.name).toBe('Savings Account');
-        expect(result.balance).toBe(100);
-        expect(result.transactions).toEqual([]);
-    });
+    expect(mockAccountRepository.createAccount).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Savings Account",
+        balance: balance,
+        id: undefined,
+      }),
+    );
+    expect(result).toBeInstanceOf(CreateAccountResponseDto);
+    expect(result.id).toBe("account-id");
+    expect(result.name).toBe("Savings Account");
+    expect(result.balance).toBe(100);
+    expect(result.transactions).toEqual([]);
+  });
 
-    it('should throw a ServiceError with the DatabaseError cause if the repository throws a DatabaseError', async () => {
-        const createAccountDto = new CreateAccountDto('Savings Account', 100 );
-        const databaseError = new DatabaseError('Database connection failed');
-        (mockAccountRepository.createAccount as Mock).mockRejectedValue(databaseError);
+  it("should throw a ServiceError with the DatabaseError cause if the repository throws a DatabaseError", async () => {
+    const createAccountDto = new CreateAccountDto("Savings Account", 100);
+    const databaseError = new DatabaseError("Database connection failed");
+    (mockAccountRepository.createAccount as Mock).mockRejectedValue(
+      databaseError,
+    );
 
-        await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
-        await expect(createAccountService.use(createAccountDto)).rejects.toHaveProperty('cause', databaseError);
-    });
+    await expect(createAccountService.use(createAccountDto)).rejects.toThrow(
+      ServiceError,
+    );
+    await expect(
+      createAccountService.use(createAccountDto),
+    ).rejects.toHaveProperty("cause", databaseError);
+  });
 
-    it('should throw a ServiceError with the DomainError cause if the repository throws a DomainError', async () => {
-        const createAccountDto = new CreateAccountDto('Savings Account', 100 );
-        const domainError = new DomainError('Invalid account state');
-        (mockAccountRepository.createAccount as Mock).mockRejectedValue(domainError);
+  it("should throw a ServiceError with the DomainError cause if the repository throws a DomainError", async () => {
+    const createAccountDto = new CreateAccountDto("Savings Account", 100);
+    const domainError = new DomainError("Invalid account state");
+    (mockAccountRepository.createAccount as Mock).mockRejectedValue(
+      domainError,
+    );
 
-        await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
-        await expect(createAccountService.use(createAccountDto)).rejects.toHaveProperty('cause', domainError);
-    });
+    await expect(createAccountService.use(createAccountDto)).rejects.toThrow(
+      ServiceError,
+    );
+    await expect(
+      createAccountService.use(createAccountDto),
+    ).rejects.toHaveProperty("cause", domainError);
+  });
 
-    it('should throw a generic ServiceError for other unexpected errors', async () => {
-        const createAccountDto = new CreateAccountDto('Savings Account', 100 );
-        const unexpectedError = new Error('Something unexpected happened');
-        (mockAccountRepository.createAccount as Mock).mockRejectedValue(unexpectedError);
+  it("should throw a generic ServiceError for other unexpected errors", async () => {
+    const createAccountDto = new CreateAccountDto("Savings Account", 100);
+    const unexpectedError = new Error("Something unexpected happened");
+    (mockAccountRepository.createAccount as Mock).mockRejectedValue(
+      unexpectedError,
+    );
 
-        await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
-        await expect(createAccountService.use(createAccountDto)).rejects.toHaveProperty('cause', unexpectedError);
-    });
+    await expect(createAccountService.use(createAccountDto)).rejects.toThrow(
+      ServiceError,
+    );
+    await expect(
+      createAccountService.use(createAccountDto),
+    ).rejects.toHaveProperty("cause", unexpectedError);
+  });
 });
