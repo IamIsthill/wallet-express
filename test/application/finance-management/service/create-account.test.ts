@@ -1,22 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach , Mock} from 'vitest';
 import { CreateAccountDto, CreateAccountService, CreateAccountResponseDto } from '../../../../src/application/finance-management';
-import { AccountRepository, Account, Balance } from '../../../../src/domain/finance-management';
+import { Account, Balance } from '../../../../src/domain/finance-management';
 import { DomainError } from '../../../../src/domain/shared/errors';
 import { DatabaseError } from '../../../../src/infrastructure/shared/errors';
 import { ServiceError } from '../../../../src/application/shared/errors';
-
-// Mock the AccountRepository
-const mockAccountRepository: AccountRepository = {
-    createAccount: vi.fn(),
-    findTransactionsByAccountId: vi.fn(),
-    updateAccount: vi.fn(),
-    deleteAccount: vi.fn(),
-    deleteTransaction: vi.fn(),
-    getAccountByAccountId: vi.fn(),
-    getAllAccounts: vi.fn(),
-    getTransactionByTransactionId: vi.fn(),
-    updateTransaction: vi.fn()
-};
+import { mockAccountRepository } from './setup';
 
 describe('CreateAccountService', () => {
     let createAccountService: CreateAccountService;
@@ -35,7 +23,7 @@ describe('CreateAccountService', () => {
             'Savings Account',
             Balance.create(100)
         );
-        (mockAccountRepository.createAccount as vi.Mock).mockResolvedValue(mockAccount);
+        (mockAccountRepository.createAccount as Mock).mockResolvedValue(mockAccount);
 
         // Act
         const result = await createAccountService.use(createAccountDto);
@@ -53,7 +41,7 @@ describe('CreateAccountService', () => {
         // Arrange
         const createAccountDto = new CreateAccountDto('Savings Account', 100 );
         const databaseError = new DatabaseError('Database connection failed');
-        (mockAccountRepository.createAccount as vi.Mock).mockRejectedValue(databaseError);
+        (mockAccountRepository.createAccount as Mock).mockRejectedValue(databaseError);
 
         // Act and Assert
         await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
@@ -64,7 +52,7 @@ describe('CreateAccountService', () => {
         // Arrange
         const createAccountDto = new CreateAccountDto('Savings Account', 100 );
         const domainError = new DomainError('Invalid account state');
-        (mockAccountRepository.createAccount as vi.Mock).mockRejectedValue(domainError);
+        (mockAccountRepository.createAccount as Mock).mockRejectedValue(domainError);
 
         // Act and Assert
         await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
@@ -75,7 +63,7 @@ describe('CreateAccountService', () => {
         // Arrange
         const createAccountDto = new CreateAccountDto('Savings Account', 100 );
         const unexpectedError = new Error('Something unexpected happened');
-        (mockAccountRepository.createAccount as vi.Mock).mockRejectedValue(unexpectedError);
+        (mockAccountRepository.createAccount as Mock).mockRejectedValue(unexpectedError);
 
         // // Act and Assert
         await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
