@@ -1,6 +1,6 @@
 import {z} from 'zod'
 import { validate } from '../../../utils/lib'
-import { Account, Transaction } from '../../../domain/finance-management'
+import { Account } from '../../../domain/finance-management'
 import { BaseTransactionDto } from './transaction.dto'
 
 export class GetAccountDto {
@@ -23,7 +23,7 @@ export class GetAccountResponseDto {
 
     constructor(account: Account) {
         this.transactions = account.transactions.map(transaction => new BaseTransactionDto(transaction))
-        this.id = account.id
+        this.id = account.id!
         this.name = account.name
         this.balance = account.balance.value
     }

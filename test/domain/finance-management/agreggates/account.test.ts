@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { Account, Balance, TransactionType } from '../../../../src/domain/finance-management'
-import { EntityNotPersistedError, InsufficientFundsError, InvalidTransferTargetError, MissingTargetAccountError, TargetAccountNotAllowedError } from '../../../../src/domain/shared/errors'
+import { EntityNotPersistedError, InsufficientFundsError, InvalidTransferTargetError, MissingTargetAccountError } from '../../../../src/domain/shared/errors'
 
 describe('Account', () => {
   it('should initialize with correct properties', () => {
@@ -86,7 +86,7 @@ describe('Account', () => {
   it('should change transaction type to transfer with target id', () => {
     const account = new Account('1', 'Test', Balance.create(500))
     const tx = account.deposit(100)
-    const updatedTx = account.changeTransactionTypeOf(tx.id, TransactionType.transfer(), '2')
+    const updatedTx = account.changeTransactionTypeOf(tx.id!, TransactionType.transfer(), '2')
 
     expect(updatedTx?.type.value).toBe('transfer')
     expect(updatedTx?.targetAccountId).toBe('2')
@@ -103,7 +103,7 @@ describe('Account', () => {
     const account = new Account('1', 'Test', Balance.create(500))
     const tx = account.deposit(100)
 
-    expect(() => account.changeTransactionTypeOf(tx.id, TransactionType.transfer())).toThrow(MissingTargetAccountError)
+    expect(() => account.changeTransactionTypeOf(tx.id!, TransactionType.transfer())).toThrow(MissingTargetAccountError)
   })
 
 

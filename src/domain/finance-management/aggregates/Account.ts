@@ -1,7 +1,6 @@
 import { EntityNotPersistedError, InvalidTransferTargetError, MissingTargetAccountError } from "../../shared/errors";
 import { Transaction } from "../entities";
 import { TransactionType, Amount, Balance } from "../value-object";
-import { v4 } from "uuid";
 
 export class Account {
     public id: string | undefined

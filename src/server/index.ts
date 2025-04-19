@@ -14,7 +14,7 @@ app.use('/v1/accounts', accountRouter)
 app.use(errorHandler)
 try {
     mongoose.connect(process.env.DATABASE_URI as string)
-} catch(err:any){
+} catch(err:unknown){
     console.log(err)
 }
 

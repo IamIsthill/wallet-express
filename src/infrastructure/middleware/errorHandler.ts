@@ -1,7 +1,7 @@
-import { NextFunction, Response, Request } from "express";
+import { Response, Request } from "express";
 import { AppError, InternalServerError } from "../../interfaces/http/errors";
 
-export const errorHandler = (err:any, req:Request, res:Response, next: NextFunction) => {
+export const errorHandler = (err:unknown, req:Request, res:Response) => {
     if(err instanceof AppError) {
         res.status(err.statusCode).json({
             name: err.name,

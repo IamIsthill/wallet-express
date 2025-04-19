@@ -1,6 +1,6 @@
-import { AccountRepository, Account, Balance } from "../../../domain/finance-management";
+import { AccountRepository, Account } from "../../../domain/finance-management";
 import { CreateAccountDto, CreateAccountResponseDto } from "../dto";
-import { DomainError, ServiceError, DatabaseError } from "../../../utils/errors";
+import { DomainError, ServiceError, DatabaseError, UnknownServiceError } from "../../../utils/errors";
 
 
 export class CreateAccountService {
@@ -12,11 +12,11 @@ export class CreateAccountService {
             const savedAccount = await this.repo.createAccount(newAccount)
             const response = new CreateAccountResponseDto(savedAccount)
             return response
-        } catch(err: any) {
+        } catch(err: unknown) {
             if(err instanceof DatabaseError || err instanceof DomainError) {
                 throw new ServiceError(err.message, {cause: err})
             } 
-            throw new ServiceError(`Unknown error in service layer: ${err.message}`, {cause: err})
+            throw new UnknownServiceError(err)
         }
     }
 }
