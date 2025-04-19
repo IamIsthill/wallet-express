@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { CannotFindError } from "../../shared/errors";
 import { NotImplemented } from "../../../utils/errors";
 import { DomainError, DatabaseError, UnknownDatabaseError } from "../../../utils/errors";
+import { AccountNotFoundError } from "../../../application/shared/errors";
 
 export class MongoAccountRepository implements AccountRepository {
     async createAccount(account: Account) {
@@ -47,7 +48,28 @@ export class MongoAccountRepository implements AccountRepository {
 
     deleteTransaction(account: Account, transactionId: string): Promise<void> {
         throw new NotImplemented()
-    } 
+    }
+
+    async createTransaction(transaction: Transaction): Promise<Transaction> {
+        try {
+            const account = await AccountModel.findByIdAndUpdate(transaction.accountId, {$push: {transactions: {
+                type: transaction.type, 
+                amount: transaction.amount,
+                accountId: transaction.accountId,
+            }}})
+            if(!account) {
+                throw new AccountNotFoundError(transaction.accountId)
+            }
+            const lastTransaction = account.transactions[account.transactions.length - 1]
+            return AccountMapper.toTransaction(lastTransaction)
+        } catch(err) {
+            if(err instanceof mongoose.Error || err instanceof DomainError) {
+                throw new DatabaseError(err.message, {cause: err})
+            }
+            throw new UnknownDatabaseError(err)
+        }
+        
+    }
 
     async getAccountByAccountId(accountId: string): Promise<Account | undefined> {
         try {
@@ -73,6 +95,7 @@ export class MongoAccountRepository implements AccountRepository {
         throw new NotImplemented()
         
     }
+
     updateTransaction(account: Account, updatedTransaction: Transaction): Promise<Transaction> {
         throw new NotImplemented()
     }

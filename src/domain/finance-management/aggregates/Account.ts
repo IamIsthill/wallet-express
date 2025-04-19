@@ -101,8 +101,8 @@ export class Account {
     }
 
 
-    private createTransaction(type: TransactionType, amount: Amount, targetAccountId?:string) {
-        const transaction = new Transaction(v4(), type, amount, this.id!, targetAccountId)
+    private createTransaction( type: TransactionType, amount: Amount, targetAccountId?:string) {
+        const transaction = new Transaction(undefined, type, amount, this.id!, targetAccountId)
         this.transactions.push(transaction)
         return transaction
     }

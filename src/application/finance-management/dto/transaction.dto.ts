@@ -1,7 +1,7 @@
 import { Transaction } from "../../../domain/finance-management";
 
 export class BaseTransactionDto {
-    public readonly id: string
+    public readonly id: string | undefined
     public readonly type: string
     public readonly amount: number
     public readonly accountId: string

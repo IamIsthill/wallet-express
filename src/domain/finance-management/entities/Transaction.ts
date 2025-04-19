@@ -2,14 +2,14 @@ import { TransactionType, Amount } from "../value-object"
 import { MissingTargetAccountError, TargetAccountNotAllowedError } from "../../shared/errors"
 
 export class Transaction {
-    public readonly id: string
+    public readonly id: string | undefined
     public type: TransactionType
     public amount: Amount
     public accountId: string
     public targetAccountId?: string
 
     constructor(
-        id: string,
+        id: string | undefined,
         type: TransactionType,
         amount: Amount,
         accountId: string,

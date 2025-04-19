@@ -11,4 +11,5 @@ export interface AccountRepository {
     getTransactionByTransactionId(transactionId: string): Promise<Transaction | undefined>
     updateTransaction(account: Account, updatedTransaction: Transaction): Promise<Transaction>
     deleteTransaction(account: Account, transactionId: string): Promise<void>
+    createTransaction(transaction: Transaction): Promise<Transaction>
 }
