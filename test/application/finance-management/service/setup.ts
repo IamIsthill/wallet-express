@@ -10,5 +10,6 @@ export const mockAccountRepository: AccountRepository = {
     getAccountByAccountId: vi.fn(),
     getAllAccounts: vi.fn(),
     getTransactionByTransactionId: vi.fn(),
-    updateTransaction: vi.fn()
+    updateTransaction: vi.fn(),
+    createTransaction: vi.fn(),
 };
