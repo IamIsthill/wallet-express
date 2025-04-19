@@ -48,6 +48,13 @@ import { DomainError } from "../../../utils/errors"
       this.name = 'TargetAccountNotAllowedError'
     }
   }
+
+  export class EntityNotPersistedError extends DomainError {
+    constructor() {
+      super('This entity do not have an id yet. Make sure it was persisted before doing futher action')
+      this.name = 'EntityNotPersistedError'
+    }
+  }
   
   
   

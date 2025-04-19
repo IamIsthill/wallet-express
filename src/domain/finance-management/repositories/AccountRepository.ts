@@ -2,7 +2,7 @@ import { Account } from "../aggregates"
 import { Transaction } from "../entities"
 
 export interface AccountRepository {
-    createAccount(name: string, balance: number): Promise<Account>
+    createAccount(account: Account): Promise<Account>
     deleteAccount(accountId: string): Promise<void>
     updateAccount(account:Account): Promise<Account>
     getAccountByAccountId(accountId: string): Promise<Account | undefined>

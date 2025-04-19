@@ -1,4 +1,4 @@
-import { AccountRepository } from "../../../domain/finance-management";
+import { AccountRepository, Account, Balance } from "../../../domain/finance-management";
 import { CreateAccountDto, CreateAccountResponseDto } from "../dto";
 import { DomainError, ServiceError, DatabaseError } from "../../../utils/errors";
 
@@ -8,8 +8,9 @@ export class CreateAccountService {
 
     public async use(dto: CreateAccountDto) {
         try {
-            const account = await this.repo.createAccount(dto.name, dto.balance)
-            const response = new CreateAccountResponseDto(account)
+            const newAccount = new Account(undefined, dto.name, dto.balance)
+            const savedAccount = await this.repo.createAccount(newAccount)
+            const response = new CreateAccountResponseDto(savedAccount)
             return response
         } catch(err: any) {
             if(err instanceof DatabaseError || err instanceof DomainError) {

@@ -7,11 +7,11 @@ import { NotImplemented } from "../../../utils/errors";
 import { DomainError, DatabaseError } from "../../../utils/errors";
 
 export class MongoAccountRepository implements AccountRepository {
-    async createAccount(name: string, balance: number) {
+    async createAccount(account: Account) {
         try {
             const mongooseAccount = await AccountModel.create({
-                name: name,
-                balance: balance,
+                name: account.name,
+                balance: account.balance.value,
                 transactions: []
             })
             return AccountMapper.toAccount(mongooseAccount)

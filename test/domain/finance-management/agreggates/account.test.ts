@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { Account, Balance, TransactionType } from '../../../../src/domain/finance-management'
-import { InsufficientFundsError, InvalidTransferTargetError, MissingTargetAccountError, TargetAccountNotAllowedError } from '../../../../src/domain/shared/errors'
+import { EntityNotPersistedError, InsufficientFundsError, InvalidTransferTargetError, MissingTargetAccountError, TargetAccountNotAllowedError } from '../../../../src/domain/shared/errors'
 
 describe('Account', () => {
   it('should initialize with correct properties', () => {
@@ -11,6 +11,27 @@ describe('Account', () => {
     expect(account.name).toBe('My Account')
     expect(account.balance.value).toBe(1000)
     expect(account.getTransactions()).toHaveLength(0)
+  })
+
+  it('should initialize when id is undefined', () => {
+    const balance = Balance.create(1000)
+    const account = new Account(undefined, 'My Account', balance)
+
+    expect(account.id).toBe(undefined)
+    expect(account.name).toBe('My Account')
+    expect(account.balance.value).toBe(1000)
+    expect(account.getTransactions()).toHaveLength(0)
+  })
+
+  it('should not allow access to entity methods if id is undefined', () => {
+    const balance = Balance.create(1000)
+    const account = new Account(undefined, 'My Account', balance)
+
+    expect(() => account.changeTransactionTypeOf('id', TransactionType.expense(), 'id')).toThrow(EntityNotPersistedError)
+    expect(() => account.deposit(100)).toThrow(EntityNotPersistedError)
+    expect(() => account.withdraw(100)).toThrow(EntityNotPersistedError)
+    expect(() => account.transferFunds(100, '1')).toThrow(EntityNotPersistedError)
+    expect(() => account.recieveTransfer(1, '1')).toThrow(EntityNotPersistedError)
   })
 
   it('should deposit an amount and increase balance', () => {

@@ -1,15 +1,15 @@
-import { InvalidTransferTargetError, MissingTargetAccountError } from "../../shared/errors";
+import { EntityNotPersistedError, InvalidTransferTargetError, MissingTargetAccountError } from "../../shared/errors";
 import { Transaction } from "../entities";
 import { TransactionType, Amount, Balance } from "../value-object";
 import { v4 } from "uuid";
 
 export class Account {
-    public id: string
+    public id: string | undefined
     public name: string;
     public balance: Balance;
     public transactions: Transaction[] = []
 
-    constructor(id:string, name: string, balance:Balance) {
+    constructor(id:string | undefined, name: string, balance:Balance) {
         this.id = id
         this.name = name;
         this.balance = balance;
@@ -21,6 +21,7 @@ export class Account {
     
 
     public deposit(amount: number): Transaction {
+        this.ensureIdExists()
         const amt = Amount.create(amount)
         this.increaseBalance(amt)
 
@@ -29,6 +30,7 @@ export class Account {
     }
 
     public withdraw(amount:number): Transaction {
+        this.ensureIdExists()
         const amt = Amount.create(amount)
         this.decreaseBalance(amt)
 
@@ -36,6 +38,7 @@ export class Account {
     }
 
     public transferFunds(amount:number, targetAccountId: string) {
+        this.ensureIdExists()
         this.ensureDifferentAccounts(targetAccountId)
         const amt = Amount.create(amount)
         this.decreaseBalance(amt)
@@ -44,6 +47,7 @@ export class Account {
     }
 
     public recieveTransfer(amount: number, sourceAccountId: string): Transaction {
+        this.ensureIdExists()
         const amt = Amount.create(amount)
         this.increaseBalance(amt)
 
@@ -52,6 +56,7 @@ export class Account {
 
 
     public changeTransactionTypeOf(transactionId: string, newType: TransactionType, targetTransferAccountId?: string) {
+        this.ensureIdExists()
         const transactionToUpdate = this.findTransaction(transactionId)
         if(!transactionToUpdate) {
             return undefined
@@ -88,11 +93,16 @@ export class Account {
         const transaction = this.transactions.find(item => item.id == transactionId)
         return transaction
     }
-    
+
+    private ensureIdExists() {
+        if(!this.id) {
+            throw new EntityNotPersistedError()
+        }
+    }
 
 
     private createTransaction(type: TransactionType, amount: Amount, targetAccountId?:string) {
-        const transaction = new Transaction(v4(), type, amount, this.id, targetAccountId)
+        const transaction = new Transaction(v4(), type, amount, this.id!, targetAccountId)
         this.transactions.push(transaction)
         return transaction
     }
