@@ -19,7 +19,7 @@ export class MongoAccountRepository implements AccountRepository {
             if(err instanceof mongoose.Error || err instanceof DomainError ) {
                 throw new DatabaseError(err.message, {cause: err})
             }
-            throw err
+            throw new DatabaseError('Error during account creation', {cause: err})
         }
     }
     

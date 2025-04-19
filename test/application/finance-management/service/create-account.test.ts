@@ -77,7 +77,7 @@ describe('CreateAccountService', () => {
         const unexpectedError = new Error('Something unexpected happened');
         (mockAccountRepository.createAccount as vi.Mock).mockRejectedValue(unexpectedError);
 
-        // Act and Assert
+        // // Act and Assert
         await expect(createAccountService.use(createAccountDto)).rejects.toThrow(ServiceError);
         await expect(createAccountService.use(createAccountDto)).rejects.toHaveProperty('cause', unexpectedError);
     });

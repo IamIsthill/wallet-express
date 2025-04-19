@@ -15,9 +15,9 @@ export class CreateAccountService {
             return response
         } catch(err: any) {
             if(err instanceof DatabaseError || err instanceof DomainError) {
-                throw new ServiceError(`Failed to create account: ${err.message}`, {cause: err})
-            }
-            throw new ServiceError('Failed to create account', {cause: err})
+                throw new ServiceError(err.message, {cause: err})
+            } 
+            throw new ServiceError(`Unknown error in service layer: ${err.message}`, {cause: err})
         }
     }
 }
