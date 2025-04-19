@@ -4,7 +4,7 @@ import { AccountMapper } from "../mappers/AccountMapper";
 import mongoose from "mongoose";
 import { CannotFindError } from "../../shared/errors";
 import { NotImplemented } from "../../../utils/errors";
-import { DomainError, DatabaseError } from "../../../utils/errors";
+import { DomainError, DatabaseError, UnknownDatabaseError } from "../../../utils/errors";
 
 export class MongoAccountRepository implements AccountRepository {
     async createAccount(account: Account) {
@@ -19,7 +19,7 @@ export class MongoAccountRepository implements AccountRepository {
             if(err instanceof mongoose.Error || err instanceof DomainError ) {
                 throw new DatabaseError(err.message, {cause: err})
             }
-            throw new DatabaseError('Error during account creation', {cause: err})
+            throw new UnknownDatabaseError(err)
         }
     }
     
@@ -49,9 +49,19 @@ export class MongoAccountRepository implements AccountRepository {
         throw new NotImplemented()
     } 
 
-    getAccountByAccountId(accountId: string): Promise<Account | undefined> {
-        throw new NotImplemented()
-        
+    async getAccountByAccountId(accountId: string): Promise<Account | undefined> {
+        try {
+            const account = await AccountModel.findById(accountId).lean()
+
+            if(!account) return undefined
+            
+            return AccountMapper.toAccount(account)
+        } catch(err) {
+            if(err instanceof mongoose.Error || err instanceof DomainError) {
+                throw new DatabaseError(err.message, {cause: err})
+            }
+            throw new UnknownDatabaseError(err)
+        }
     }
     getAllAccounts(): Promise<Account[]> {
         throw new NotImplemented()

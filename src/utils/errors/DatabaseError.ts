@@ -7,3 +7,10 @@ export class DatabaseError extends Error {
         Error.captureStackTrace(this)
     }
 }
+
+export class UnknownDatabaseError extends DatabaseError {
+    constructor(err: unknown) {
+        super(`Unknown error in the database`, {cause: err})
+        this.name = 'UnknownDatabaseError'
+    }
+}
