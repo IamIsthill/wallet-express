@@ -1,7 +1,7 @@
 import { AccountRepository } from "../../../domain/finance-management";
 import { GetAccountDto, GetAccountResponseDto } from "../dto";
-import { AccountNotFoundError, ServiceError, UnknownServiceError } from "../../shared/errors";
-import { DatabaseError } from "../../../infrastructure/shared/errors";
+import { AccountNotFoundError} from "../../shared/errors";
+import { ServiceError, UnknownServiceError, DatabaseError } from "../../../utils/errors";
 
 export class GetAccountService {
     constructor(private readonly repo: AccountRepository) {}

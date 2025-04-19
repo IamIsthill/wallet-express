@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach , Mock} from 'vitest';
 import { CreateAccountDto, CreateAccountService, CreateAccountResponseDto } from '../../../../src/application/finance-management';
 import { Account, Balance } from '../../../../src/domain/finance-management';
-import { DomainError } from '../../../../src/domain/shared/errors';
-import { DatabaseError } from '../../../../src/infrastructure/shared/errors';
-import { ServiceError } from '../../../../src/application/shared/errors';
+import { DomainError, ServiceError, DatabaseError } from '../../../../src/utils/errors';
 import { mockAccountRepository } from './setup';
 
 describe('CreateAccountService', () => {

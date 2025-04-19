@@ -2,9 +2,8 @@ import { describe, vi, it, expect, beforeEach, Mock } from "vitest";
 import { GetAccountService, GetAccountDto, GetAccountResponseDto } from "../../../../src/application/finance-management";
 import { Account, Balance } from "../../../../src/domain/finance-management";
 import { mockAccountRepository } from "./setup";
-import { AccountNotFoundError, ServiceError, UnknownServiceError } from "../../../../src/application/shared/errors";
-import { DatabaseError } from "../../../../src/infrastructure/shared/errors";
-import { DomainError } from "../../../../src/domain/shared/errors";
+import { DomainError, ServiceError, UnknownServiceError, DatabaseError } from "../../../../src/utils/errors";
+import { AccountNotFoundError } from "../../../../src/application/shared/errors";
 
 describe('GetAccountService', () => {
     let getAccountService: GetAccountService
@@ -70,5 +69,4 @@ describe('GetAccountService', () => {
         await expect(getAccountService.use(getAccountDto)).rejects.toThrow(UnknownServiceError)
         await expect(getAccountService.use(getAccountDto)).rejects.toHaveProperty('cause', unknownError)
     })
-
 })

@@ -2,9 +2,9 @@ import { AccountModel } from "../models";
 import { Account, AccountRepository, Transaction } from "../../../domain/finance-management";
 import { AccountMapper } from "../mappers/AccountMapper";
 import mongoose from "mongoose";
-import { DatabaseError, CannotFindError } from "../../shared/errors";
-import { DomainError } from "../../../domain/shared/errors";
+import { CannotFindError } from "../../shared/errors";
 import { NotImplemented } from "../../../utils/errors";
+import { DomainError, DatabaseError } from "../../../utils/errors";
 
 export class MongoAccountRepository implements AccountRepository {
     async createAccount(name: string, balance: number) {

@@ -1,8 +1,6 @@
 import { AccountRepository } from "../../../domain/finance-management";
 import { CreateAccountDto, CreateAccountResponseDto } from "../dto";
-import { DatabaseError } from "../../../infrastructure/shared/errors";
-import { DomainError } from "../../../domain/shared/errors";
-import { ServiceError } from "../../shared/errors";
+import { DomainError, ServiceError, DatabaseError } from "../../../utils/errors";
 
 
 export class CreateAccountService {
