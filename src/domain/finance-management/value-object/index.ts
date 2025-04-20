@@ -1,3 +1,3 @@
-export * from "./TransactionType";
-export * from "./Amount";
-export * from "./Balance";
+export * from './transaction-type'
+export * from './amounts'
+export * from './balances'

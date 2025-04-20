@@ -1,1 +1,1 @@
-export * from "./MongoAccountRepository";
+export * from './mongo-account-repository'

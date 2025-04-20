@@ -1,29 +1,32 @@
 import {
-  CreateAccountService,
-  CreateAccountDto,
-} from "../../../../application/finance-management";
-import { MongoAccountRepository } from "../../../../infrastructure/mongo";
-import { BadRequestError } from "../../errors";
-import { ServiceError } from "../../../../utils/errors";
-import { NextFunction, Request, Response } from "express";
-import { codes } from "../../../../utils/lib";
+    CreateAccountService,
+    CreateAccountDto,
+} from '../../../../application/finance-management'
+import { MongoAccountRepository } from '../../../../infrastructure/mongo'
+import { BadRequestError } from '../../errors'
+import { ServiceError } from '../../../../utils/errors'
+import { NextFunction, Request, Response } from 'express'
+import { codes } from '../../../../utils/lib'
 
-const repo = new MongoAccountRepository();
-const service = new CreateAccountService(repo);
+const repo = new MongoAccountRepository()
+const service = new CreateAccountService(repo)
 
 export const addAccount = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+    request: Request,
+    response: Response,
+    next: NextFunction
 ) => {
-  try {
-    const dto = new CreateAccountDto(req.body.name, req.body.balance);
-    const newAccount = await service.use(dto);
-    res.status(codes.CREATED).json(newAccount);
-  } catch (err: unknown) {
-    if (err instanceof ServiceError) {
-      next(new BadRequestError(err.message));
+    try {
+        const dto = new CreateAccountDto(
+            request.body.name,
+            request.body.balance
+        )
+        const createdAccount = await service.use(dto)
+        response.status(codes.CREATED).json(createdAccount)
+    } catch (error: unknown) {
+        if (error instanceof ServiceError) {
+            next(new BadRequestError(error.message))
+        }
+        next(error)
     }
-    next(err);
-  }
-};
+}
