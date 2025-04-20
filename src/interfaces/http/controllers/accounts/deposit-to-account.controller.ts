@@ -22,10 +22,8 @@ export const depositToAccount = async (
     next: NextFunction
 ) => {
     try {
-        const dto = new DepositToAccountDto(
-            request.params.accountId,
-            request.body.depositAmount
-        )
+        request.body.accountId = request.params.accountId
+        const dto = new DepositToAccountDto(request.body)
         const depositTransaction = await service.use(dto)
         response.status(codes.CREATED).json(depositTransaction)
     } catch (error: unknown) {

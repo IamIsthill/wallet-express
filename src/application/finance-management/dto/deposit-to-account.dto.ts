@@ -13,8 +13,8 @@ export class DepositToAccountDto {
     public readonly accountId: string
     public readonly depositAmount: number
 
-    constructor(accountId: string, depositAmount: number) {
-        const data = validate(this.schema, { accountId, depositAmount })
+    constructor(request: { accountId: string; depositAmount: number }) {
+        const data = validate(this.schema, request)
         this.accountId = data.accountId
         this.depositAmount = data.depositAmount
     }

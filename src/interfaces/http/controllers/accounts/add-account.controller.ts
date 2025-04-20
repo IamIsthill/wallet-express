@@ -17,10 +17,7 @@ export const addAccount = async (
     next: NextFunction
 ) => {
     try {
-        const dto = new CreateAccountDto(
-            request.body.name,
-            request.body.balance
-        )
+        const dto = new CreateAccountDto(request.body)
         const createdAccount = await service.use(dto)
         response.status(codes.CREATED).json(createdAccount)
     } catch (error: unknown) {
