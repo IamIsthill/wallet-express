@@ -23,7 +23,10 @@ describe('CreateAccountService', () => {
 
     it('should create an Account entity and return a CreateAccountResponseDto on success', async () => {
         const balance = Balance.create(100)
-        const createAccountDto = new CreateAccountDto('Savings Account', 100)
+        const createAccountDto = new CreateAccountDto({
+            name: 'Savings Account',
+            balance: 100,
+        })
         const mockAccount = new Account(
             'account-id',
             'Savings Account',
@@ -50,7 +53,10 @@ describe('CreateAccountService', () => {
     })
 
     it('should throw a ServiceError with the DatabaseError cause if the repository throws a DatabaseError', async () => {
-        const createAccountDto = new CreateAccountDto('Savings Account', 100)
+        const createAccountDto = new CreateAccountDto({
+            name: 'Savings Account',
+            balance: 100,
+        })
         const databaseError = new DatabaseError('Database connection failed')
         ;(mockAccountRepository.createAccount as Mock).mockRejectedValue(
             databaseError
@@ -65,7 +71,10 @@ describe('CreateAccountService', () => {
     })
 
     it('should throw a ServiceError with the DomainError cause if the repository throws a DomainError', async () => {
-        const createAccountDto = new CreateAccountDto('Savings Account', 100)
+        const createAccountDto = new CreateAccountDto({
+            name: 'Savings Account',
+            balance: 100,
+        })
         const domainError = new DomainError('Invalid account state')
         ;(mockAccountRepository.createAccount as Mock).mockRejectedValue(
             domainError
@@ -80,7 +89,10 @@ describe('CreateAccountService', () => {
     })
 
     it('should throw a generic ServiceError for other unexpected errors', async () => {
-        const createAccountDto = new CreateAccountDto('Savings Account', 100)
+        const createAccountDto = new CreateAccountDto({
+            name: 'Savings Account',
+            balance: 100,
+        })
         const unexpectedError = new Error('Something unexpected happened')
         ;(mockAccountRepository.createAccount as Mock).mockRejectedValue(
             unexpectedError

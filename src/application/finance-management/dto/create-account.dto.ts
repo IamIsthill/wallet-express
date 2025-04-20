@@ -11,8 +11,8 @@ export class CreateAccountDto {
     public readonly name: string
     public readonly balance: Balance
 
-    constructor(name: string, balance: number) {
-        const data = validate(this.schema, { name, balance })
+    constructor(request: { name: string; balance: number }) {
+        const data = validate(this.schema, request)
         this.name = data.name
         this.balance = Balance.create(data.balance)
     }

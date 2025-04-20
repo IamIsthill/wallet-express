@@ -5,7 +5,7 @@ export function validate<T extends z.ZodRawShape>(
     schema: z.ZodObject<T>,
     data: z.infer<z.ZodObject<T>>
 ): z.infer<z.ZodObject<T>> {
-    const response = schema.safeParse(data)
+    const response = schema.strict().safeParse(data)
 
     if (!response.success) {
         throw new ServiceError(
