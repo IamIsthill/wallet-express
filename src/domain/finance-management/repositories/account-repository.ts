@@ -8,13 +8,4 @@ export interface AccountRepository {
     getAccountByAccountId(accountId: string): Promise<Account | undefined>
     getAllAccounts(): Promise<Account[]>
     findTransactionsByAccountId(accountId: string): Promise<Transaction[]>
-    getTransactionByTransactionId(
-        transactionId: string
-    ): Promise<Transaction | undefined>
-    updateTransaction(
-        account: Account,
-        updatedTransaction: Transaction
-    ): Promise<Transaction>
-    deleteTransaction(account: Account, transactionId: string): Promise<void>
-    createTransaction(transaction: Transaction): Promise<Transaction>
 }
