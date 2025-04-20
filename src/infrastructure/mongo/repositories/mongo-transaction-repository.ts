@@ -3,11 +3,42 @@ import {
     Transaction,
     TransactionRepository,
 } from '../../../domain/finance-management'
-import { NotImplementedError } from '../../../utils/errors'
+import {
+    NotImplementedError,
+    DomainError,
+    DatabaseError,
+    UnknownDatabaseError,
+} from '../../../utils/errors'
+import { AccountNotFoundError } from '../../../application/shared/errors'
+import { TransactionMapper } from '../mappers'
+import { AccountModel, TransactionModel } from '../models'
+import mongoose from 'mongoose'
 
 export class MongooseTransactionRepository implements TransactionRepository {
-    createTransaction(transaction: Transaction): Promise<Transaction> {
-        throw new NotImplementedError()
+    async createTransaction(transaction: Transaction): Promise<Transaction> {
+        try {
+            const account = await AccountModel.findById(transaction.accountId)
+            if (!account) {
+                throw new AccountNotFoundError(transaction.accountId)
+            }
+            const lastTransaction = await TransactionModel.create({
+                type: transaction.type,
+                amount: transaction.amount,
+                accountId: transaction.accountId,
+            })
+            account.transactions.push(lastTransaction._id)
+            await account.save()
+
+            return TransactionMapper.mapper(lastTransaction)
+        } catch (error) {
+            if (
+                error instanceof mongoose.Error ||
+                error instanceof DomainError
+            ) {
+                throw new DatabaseError(error.message, { cause: error })
+            }
+            throw new UnknownDatabaseError(error)
+        }
     }
     deleteTransaction(account: Account, transactionId: string): Promise<void> {
         throw new NotImplementedError()

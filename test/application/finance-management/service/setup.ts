@@ -1,4 +1,7 @@
-import { AccountRepository } from '../../../../src/domain/finance-management'
+import {
+    AccountRepository,
+    TransactionRepository,
+} from '../../../../src/domain/finance-management'
 import { vi } from 'vitest'
 
 export const mockAccountRepository: AccountRepository = {
@@ -6,10 +9,13 @@ export const mockAccountRepository: AccountRepository = {
     findTransactionsByAccountId: vi.fn(),
     updateAccount: vi.fn(),
     deleteAccount: vi.fn(),
-    deleteTransaction: vi.fn(),
     getAccountByAccountId: vi.fn(),
     getAllAccounts: vi.fn(),
-    getTransactionByTransactionId: vi.fn(),
-    updateTransaction: vi.fn(),
+}
+
+export const mockTransactionRepository: TransactionRepository = {
     createTransaction: vi.fn(),
+    deleteTransaction: vi.fn(),
+    getTransactionById: vi.fn(),
+    updateTransaction: vi.fn(),
 }

@@ -4,7 +4,7 @@ import {
     DepositToAccountDto,
     DepositToTransactionResponseDto,
 } from '../../../../src/application/finance-management'
-import { mockAccountRepository } from './setup'
+import { mockAccountRepository, mockTransactionRepository } from './setup'
 import {
     Account,
     Balance,
@@ -26,6 +26,7 @@ describe('DepositToAccountService', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         depositToAccountService = new DepositToAccountService(
+            mockTransactionRepository,
             mockAccountRepository
         )
     })
@@ -46,13 +47,15 @@ describe('DepositToAccountService', () => {
         ;(
             mockAccountRepository.getAccountByAccountId as Mock
         ).mockResolvedValue(mockAccount)
-        ;(mockAccountRepository.createTransaction as Mock).mockResolvedValue(
-            mockTransaction
-        )
+        ;(
+            mockTransactionRepository.createTransaction as Mock
+        ).mockResolvedValue(mockTransaction)
 
         const response = await depositToAccountService.use(depositDto)
 
-        expect(mockAccountRepository.createTransaction).toHaveBeenCalledWith({
+        expect(
+            mockTransactionRepository.createTransaction
+        ).toHaveBeenCalledWith({
             id: undefined,
             type: { value: 'income' },
             amount: { _value: 100 },
@@ -94,9 +97,9 @@ describe('DepositToAccountService', () => {
         ;(
             mockAccountRepository.getAccountByAccountId as Mock
         ).mockResolvedValue(mockAccount)
-        ;(mockAccountRepository.createTransaction as Mock).mockRejectedValue(
-            databaseError
-        )
+        ;(
+            mockTransactionRepository.createTransaction as Mock
+        ).mockRejectedValue(databaseError)
 
         await expect(depositToAccountService.use(dto)).rejects.toThrow(
             ServiceError
@@ -118,9 +121,9 @@ describe('DepositToAccountService', () => {
         ;(
             mockAccountRepository.getAccountByAccountId as Mock
         ).mockResolvedValue(mockAccount)
-        ;(mockAccountRepository.createTransaction as Mock).mockRejectedValue(
-            error
-        )
+        ;(
+            mockTransactionRepository.createTransaction as Mock
+        ).mockRejectedValue(error)
 
         await expect(depositToAccountService.use(dto)).rejects.toThrow(
             ServiceError
@@ -142,9 +145,9 @@ describe('DepositToAccountService', () => {
         ;(
             mockAccountRepository.getAccountByAccountId as Mock
         ).mockResolvedValue(mockAccount)
-        ;(mockAccountRepository.createTransaction as Mock).mockRejectedValue(
-            error
-        )
+        ;(
+            mockTransactionRepository.createTransaction as Mock
+        ).mockRejectedValue(error)
 
         await expect(depositToAccountService.use(dto)).rejects.toThrow(
             UnknownServiceError

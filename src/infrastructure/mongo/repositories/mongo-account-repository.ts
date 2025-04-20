@@ -1,10 +1,6 @@
-import { AccountModel, TransactionModel } from '../models'
-import {
-    Account,
-    AccountRepository,
-    Transaction,
-} from '../../../domain/finance-management'
-import { AccountMapper } from '../mappers'
+import { AccountModel } from '../models'
+import { Account, AccountRepository } from '../../../domain/finance-management'
+import { AccountMapper, TransactionMapper } from '../mappers'
 import mongoose from 'mongoose'
 import { CannotFindError } from '../../shared/errors'
 import { NotImplementedError } from '../../../utils/errors'
@@ -13,7 +9,6 @@ import {
     DatabaseError,
     UnknownDatabaseError,
 } from '../../../utils/errors'
-import { AccountNotFoundError } from '../../../application/shared/errors'
 import { MongooseAccountDocumentPopulated } from '../types'
 
 export class MongoAccountRepository implements AccountRepository {
@@ -49,7 +44,7 @@ export class MongoAccountRepository implements AccountRepository {
             }
 
             return mongooseAccount.transactions.map((transaction) =>
-                AccountMapper.toTransaction(transaction)
+                TransactionMapper.mapper(transaction)
             )
         } catch (error) {
             if (
@@ -64,36 +59,6 @@ export class MongoAccountRepository implements AccountRepository {
 
     async deleteAccount(accountId: string): Promise<void> {
         throw new NotImplementedError()
-    }
-
-    deleteTransaction(account: Account, transactionId: string): Promise<void> {
-        throw new NotImplementedError()
-    }
-
-    async createTransaction(transaction: Transaction): Promise<Transaction> {
-        try {
-            const account = await AccountModel.findById(transaction.accountId)
-            if (!account) {
-                throw new AccountNotFoundError(transaction.accountId)
-            }
-            const lastTransaction = await TransactionModel.create({
-                type: transaction.type,
-                amount: transaction.amount,
-                accountId: transaction.accountId,
-            })
-            account.transactions.push(lastTransaction._id)
-            await account.save()
-
-            return AccountMapper.toTransaction(lastTransaction)
-        } catch (error) {
-            if (
-                error instanceof mongoose.Error ||
-                error instanceof DomainError
-            ) {
-                throw new DatabaseError(error.message, { cause: error })
-            }
-            throw new UnknownDatabaseError(error)
-        }
     }
 
     async getAccountByAccountId(
@@ -119,18 +84,6 @@ export class MongoAccountRepository implements AccountRepository {
         throw new NotImplementedError()
     }
     updateAccount(account: Account): Promise<Account> {
-        throw new NotImplementedError()
-    }
-    getTransactionByTransactionId(
-        transactionId: string
-    ): Promise<Transaction | undefined> {
-        throw new NotImplementedError()
-    }
-
-    updateTransaction(
-        account: Account,
-        updatedTransaction: Transaction
-    ): Promise<Transaction> {
         throw new NotImplementedError()
     }
 }

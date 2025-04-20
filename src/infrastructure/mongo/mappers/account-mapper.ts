@@ -1,15 +1,9 @@
 import {
     MongooseAccountDocument,
-    MongooseTransactionDocument,
     MongooseAccountDocumentPopulated,
 } from '../types'
-import {
-    Account,
-    Transaction,
-    TransactionType,
-    Amount,
-    Balance,
-} from '../../../domain/finance-management'
+import { Account, Balance } from '../../../domain/finance-management'
+import { TransactionMapper } from './transaction-mapper'
 
 export const AccountMapper = {
     toAccount(mongooseAccount: MongooseAccountDocument) {
@@ -33,21 +27,10 @@ export const AccountMapper = {
 
         if (transactions.length > 0) {
             account.transactions = transactions.map((transaction) =>
-                this.toTransaction(transaction)
+                TransactionMapper.mapper(transaction)
             )
         }
 
         return account
-    },
-
-    toTransaction(mongooseTransaction: MongooseTransactionDocument) {
-        const amt = Amount.create(mongooseTransaction.amount)
-        return new Transaction(
-            mongooseTransaction._id.toString(),
-            TransactionType._create(mongooseTransaction.type),
-            amt,
-            mongooseTransaction.accountId,
-            mongooseTransaction.targetAccountId
-        )
     },
 }
