@@ -3,14 +3,18 @@ import {
     DepositToAccountDto,
 } from '../../../../application/finance-management'
 import { NextFunction, Request, Response } from 'express'
-import { MongoAccountRepository } from '../../../../infrastructure/mongo'
+import {
+    MongoAccountRepository,
+    MongooseTransactionRepository,
+} from '../../../../infrastructure/mongo'
 import { codes } from '../../../../utils/lib'
 import { AccountNotFoundError } from '../../../../application/shared/errors'
 import { ServiceError } from '../../../../utils/errors'
 import { BadRequestError, NotFoundError } from '../../errors'
 
-const repo = new MongoAccountRepository()
-const service = new DepositToAccountService(repo)
+const accountRepo = new MongoAccountRepository()
+const transactionRepo = new MongooseTransactionRepository()
+const service = new DepositToAccountService(transactionRepo, accountRepo)
 
 export const depositToAccount = async (
     request: Request,
