@@ -32,7 +32,10 @@ describe('DepositToAccountService', () => {
     })
 
     it('should correctly increase the balance', async () => {
-        const depositDto = new DepositToAccountDto('account-id', 100)
+        const depositDto = new DepositToAccountDto({
+            accountId: 'account-id',
+            depositAmount: 100,
+        })
         const mockAccount = new Account(
             'account-id',
             'Savings Account',
@@ -75,7 +78,10 @@ describe('DepositToAccountService', () => {
     })
 
     it('should throw an AccountNotFoundError when no account to deposit to is found', async () => {
-        const depositDto = new DepositToAccountDto('not-existing-account', 100)
+        const depositDto = new DepositToAccountDto({
+            accountId: 'not-existing-account',
+            depositAmount: 100,
+        })
         const mockReturn = undefined
         ;(
             mockAccountRepository.getAccountByAccountId as Mock
@@ -87,7 +93,10 @@ describe('DepositToAccountService', () => {
     })
 
     it('should throw a ServiceError wrapping the DatabaseError from the repository', async () => {
-        const dto = new DepositToAccountDto('account-id', 100)
+        const dto = new DepositToAccountDto({
+            accountId: 'account-id',
+            depositAmount: 100,
+        })
         const mockAccount = new Account(
             'account-id',
             'Savings Account',
@@ -111,7 +120,10 @@ describe('DepositToAccountService', () => {
     })
 
     it('should throw a ServiceError wrapping the DomainError from the repository', async () => {
-        const dto = new DepositToAccountDto('account-id', 100)
+        const dto = new DepositToAccountDto({
+            accountId: 'account-id',
+            depositAmount: 100,
+        })
         const mockAccount = new Account(
             'account-id',
             'Savings Account',
@@ -135,7 +147,10 @@ describe('DepositToAccountService', () => {
     })
 
     it('should throw an UnknownServiceError wrapping other unexpected errors from the repository', async () => {
-        const dto = new DepositToAccountDto('account-id', 100)
+        const dto = new DepositToAccountDto({
+            accountId: 'account-id',
+            depositAmount: 100,
+        })
         const mockAccount = new Account(
             'account-id',
             'Savings Account',

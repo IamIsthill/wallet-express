@@ -5,4 +5,5 @@ export const accountRouter = Router()
 
 accountRouter.post('/', controller.addAccount)
 accountRouter.get('/:accountId', controller.getAccount)
+accountRouter.patch('/:accountId', controller.updateAccount)
 accountRouter.post('/:accountId/deposit', controller.depositToAccount)

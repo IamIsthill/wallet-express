@@ -7,7 +7,7 @@ import { vi } from 'vitest'
 export const mockAccountRepository: AccountRepository = {
     createAccount: vi.fn(),
     findTransactionsByAccountId: vi.fn(),
-    updateAccount: vi.fn(),
+    save: vi.fn(),
     deleteAccount: vi.fn(),
     getAccountByAccountId: vi.fn(),
     getAllAccounts: vi.fn(),
