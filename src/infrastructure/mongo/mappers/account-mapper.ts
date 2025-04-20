@@ -1,4 +1,8 @@
-import { MongooseAccountDocument, MongooseTransactionDocument } from '../types'
+import {
+    MongooseAccountDocument,
+    MongooseTransactionDocument,
+    MongooseAccountDocumentPopulated,
+} from '../types'
 import {
     Account,
     Transaction,
@@ -9,17 +13,30 @@ import {
 
 export const AccountMapper = {
     toAccount(mongooseAccount: MongooseAccountDocument) {
+        const { _id, name, balance } = mongooseAccount
+        const account = new Account(
+            _id.toString(),
+            name,
+            Balance.create(balance)
+        )
+
+        return account
+    },
+
+    toAccountPopulated(mongooseAccount: MongooseAccountDocumentPopulated) {
         const { _id, name, balance, transactions } = mongooseAccount
         const account = new Account(
             _id.toString(),
             name,
             Balance.create(balance)
         )
+
         if (transactions.length > 0) {
-            account.transactions = transactions.map((mt) =>
-                this.toTransaction(mt)
+            account.transactions = transactions.map((transaction) =>
+                this.toTransaction(transaction)
             )
         }
+
         return account
     },
 

@@ -1,4 +1,4 @@
-import { AccountModel } from '../models'
+import { AccountModel, TransactionModel } from '../models'
 import {
     Account,
     AccountRepository,
@@ -14,6 +14,7 @@ import {
     UnknownDatabaseError,
 } from '../../../utils/errors'
 import { AccountNotFoundError } from '../../../application/shared/errors'
+import { MongooseAccountDocumentPopulated } from '../types'
 
 export class MongoAccountRepository implements AccountRepository {
     async createAccount(account: Account) {
@@ -37,8 +38,11 @@ export class MongoAccountRepository implements AccountRepository {
 
     async findTransactionsByAccountId(accountId: string) {
         try {
-            const mongooseAccount =
-                await AccountModel.findById(accountId).lean()
+            const mongooseAccount = (await AccountModel.findById(
+                accountId
+            ).populate(
+                'transactions'
+            )) as MongooseAccountDocumentPopulated | null
 
             if (!mongooseAccount) {
                 throw new CannotFindError()
@@ -68,23 +72,19 @@ export class MongoAccountRepository implements AccountRepository {
 
     async createTransaction(transaction: Transaction): Promise<Transaction> {
         try {
-            const account = await AccountModel.findByIdAndUpdate(
-                transaction.accountId,
-                {
-                    $push: {
-                        transactions: {
-                            type: transaction.type,
-                            amount: transaction.amount,
-                            accountId: transaction.accountId,
-                        },
-                    },
-                }
-            )
+            const account = await AccountModel.findById(transaction.accountId)
             if (!account) {
                 throw new AccountNotFoundError(transaction.accountId)
             }
-            const lastTransaction = account.transactions.at(-1)
-            return AccountMapper.toTransaction(lastTransaction!)
+            const lastTransaction = await TransactionModel.create({
+                type: transaction.type,
+                amount: transaction.amount,
+                accountId: transaction.accountId,
+            })
+            account.transactions.push(lastTransaction._id)
+            await account.save()
+
+            return AccountMapper.toTransaction(lastTransaction)
         } catch (error) {
             if (
                 error instanceof mongoose.Error ||
