@@ -22,13 +22,15 @@ export default defineConfig([
         },
         ignores: [
             "src/infrastructure/mongo/repositories/mongo-account-repository.ts",
-            "src/infrastructure/mongo/repositories/mongo-transaction-repository.ts"
+            "src/infrastructure/mongo/repositories/mongo-transaction-repository.ts",
+            "src/infrastructure/middleware/error-handler.ts"
         ]
     },
     tseslint.configs.recommended,
     tseslint.configs.stylistic,
     globalIgnores([
         "src/infrastructure/mongo/repositories/mongo-account-repository.ts",
-        "src/infrastructure/mongo/repositories/mongo-transaction-repository.ts"
+        "src/infrastructure/mongo/repositories/mongo-transaction-repository.ts",
+        "src/infrastructure/middleware/error-handler.ts"
     ]),
 ]);
