@@ -13,7 +13,7 @@ export class CreateAccountService {
     public async use(dto: CreateAccountDto) {
         try {
             const account = new Account(undefined, dto.name, dto.balance)
-            const savedAccount = await this.repo.createAccount(account)
+            const savedAccount = await this.repo.save(account)
             const response = new CreateAccountResponseDto(savedAccount)
             return response
         } catch (error: unknown) {

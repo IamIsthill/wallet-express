@@ -16,29 +16,31 @@ export class MongoUnitWork implements UnitOfWork {
     constructor(private readonly connection: mongoose.Connection) {}
 
     async commit(): Promise<void> {
-        if (!this.session) {
+        if (!this.isSessionActive()) {
             throw new DatabaseError('No active session to commit')
         }
 
-        await this.session.commitTransaction()
+        await this.session!.commitTransaction()
     }
 
     async endSession(): Promise<void> {
-        if (this.session) {
-            this.session.endSession()
+        if (this.isSessionActive()) {
+            await this.session!.endSession()
             this.session = undefined
+            this.accountRepository = undefined
+            this.transactionRepository = undefined
         }
     }
 
     getTransactionRepository(): TransactionRepository {
-        if (!this.session) {
+        if (!this.isSessionActive()) {
             throw new DatabaseError(
                 'Session not started.  Start a session before getting the repository.'
             )
         }
         this.transactionRepository =
             this.transactionRepository ||
-            new MongooseTransactionRepository(this.connection, this.session)
+            new MongooseTransactionRepository(this.connection, this.session!)
         return this.transactionRepository
     }
 
@@ -55,15 +57,22 @@ export class MongoUnitWork implements UnitOfWork {
     }
 
     async rollback(): Promise<void> {
-        if (!this.session) {
+        if (!this.isSessionActive()) {
             throw new DatabaseError('No active session to rollback')
         }
 
-        this.session.abortTransaction()
+        await this.session!.abortTransaction()
     }
 
     async startSession(): Promise<void> {
+        if (this.session) {
+            throw new DatabaseError('Session already started')
+        }
         this.session = await this.connection.startSession()
         this.session.startTransaction()
+    }
+
+    private isSessionActive() {
+        return this.session != undefined && this.session?.inTransaction()
     }
 }

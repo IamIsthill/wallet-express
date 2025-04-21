@@ -16,9 +16,10 @@ export const getAccount = async (
     next: NextFunction
 ) => {
     const unitWork = new MongoUnitWork(mongoose.connection)
-    const service = new GetAccountService(unitWork.getAccountRepository())
+
     try {
         await unitWork.startSession()
+        const service = new GetAccountService(unitWork.getAccountRepository())
         const dto = new GetAccountDto(request.params.accountId)
         const account = await service.use(dto)
         await unitWork.commit()

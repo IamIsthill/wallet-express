@@ -19,29 +19,6 @@ export class MongoAccountRepository implements AccountRepository {
         private readonly connection: mongoose.Connection,
         private readonly session: mongoose.ClientSession
     ) {}
-    async createAccount(account: Account) {
-        try {
-            const mongooseAccount = await AccountModel.create(
-                [
-                    {
-                        name: account.name,
-                        balance: account.balance.value,
-                        transactions: [],
-                    },
-                ],
-                { session: this.session }
-            ).then((docs) => docs[0])
-            return AccountMapper.toAccount(mongooseAccount)
-        } catch (error) {
-            if (
-                error instanceof mongoose.Error ||
-                error instanceof DomainError
-            ) {
-                throw new DatabaseError(error.message, { cause: error })
-            }
-            throw new UnknownDatabaseError(error)
-        }
-    }
 
     async findTransactionsByAccountId(accountId: string) {
         try {
@@ -77,7 +54,9 @@ export class MongoAccountRepository implements AccountRepository {
         accountId: string
     ): Promise<Account | undefined> {
         try {
-            const account = await AccountModel.findById(accountId).lean()
+            const account = await AccountModel.findById(accountId).session(
+                this.session
+            )
 
             if (!account) return undefined
 
@@ -100,10 +79,8 @@ export class MongoAccountRepository implements AccountRepository {
     async save(account: Account): Promise<Account> {
         try {
             const existingAccount = await AccountModel.findById(
-                account.id,
-                null,
-                { session: this.session }
-            )
+                account.id
+            ).session(this.session)
 
             let persistedAccount: MongooseAccountDocument
 

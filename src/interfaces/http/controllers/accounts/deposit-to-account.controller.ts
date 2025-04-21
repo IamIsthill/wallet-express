@@ -18,7 +18,7 @@ export const depositToAccount = async (
     const unitWork = new MongoUnitWork(mongoose.connection)
 
     try {
-        unitWork.startSession()
+        await unitWork.startSession()
         const transactionRepo = unitWork.getTransactionRepository()
         const accountRepo = unitWork.getAccountRepository()
         const service = new DepositToAccountService(

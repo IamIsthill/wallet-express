@@ -16,9 +16,13 @@ export const updateAccount = async (
     next: NextFunction
 ) => {
     const unitWork = new MongoUnitWork(mongoose.connection)
-    const service = new UpdateAccountService(unitWork.getAccountRepository())
+
     try {
         await unitWork.startSession()
+        const service = new UpdateAccountService(
+            unitWork.getAccountRepository()
+        )
+
         request.body.accountId = request.params.accountId
         const dto = new UpdateAccountDto(request.body)
         const account = await service.use(dto)

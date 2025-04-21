@@ -11,6 +11,7 @@ export class Account {
     public name: string
     public balance: Balance
     public transactions: Transaction[] = []
+    public transactionIds: string[] = []
 
     constructor(id: string | undefined, name: string, balance: Balance) {
         this.id = id

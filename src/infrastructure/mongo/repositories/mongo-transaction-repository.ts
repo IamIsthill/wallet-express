@@ -30,10 +30,8 @@ export class MongooseTransactionRepository implements TransactionRepository {
     async save(transaction: Transaction): Promise<Transaction> {
         try {
             const existingTransaction = await TransactionModel.findById(
-                transaction.id,
-                null,
-                { session: this.session }
-            )
+                transaction.id
+            ).session(this.session)
 
             let persistedTransaction: MongooseTransactionDocument
 
