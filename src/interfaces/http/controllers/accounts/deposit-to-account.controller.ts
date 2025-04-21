@@ -40,5 +40,7 @@ export const depositToAccount = async (
         } else {
             next(error)
         }
+    } finally {
+        await unitWork.endSession()
     }
 }
