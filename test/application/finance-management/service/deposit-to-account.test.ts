@@ -66,6 +66,7 @@ describe('DepositToAccountService', () => {
         expect(mockAccountRepository.save).toHaveBeenCalledWith({
             id: 'account-id',
             balance: Balance.create(200),
+            transactionIds: [],
             name: 'Savings Account',
             transactions: expect.arrayContaining([expect.any(Transaction)]),
         })

@@ -32,13 +32,11 @@ describe('CreateAccountService', () => {
             'Savings Account',
             balance
         )
-        ;(mockAccountRepository.createAccount as Mock).mockResolvedValue(
-            mockAccount
-        )
+        ;(mockAccountRepository.save as Mock).mockResolvedValue(mockAccount)
 
         const result = await createAccountService.use(createAccountDto)
 
-        expect(mockAccountRepository.createAccount).toHaveBeenCalledWith(
+        expect(mockAccountRepository.save).toHaveBeenCalledWith(
             expect.objectContaining({
                 name: 'Savings Account',
                 balance: balance,
@@ -58,9 +56,7 @@ describe('CreateAccountService', () => {
             balance: 100,
         })
         const databaseError = new DatabaseError('Database connection failed')
-        ;(mockAccountRepository.createAccount as Mock).mockRejectedValue(
-            databaseError
-        )
+        ;(mockAccountRepository.save as Mock).mockRejectedValue(databaseError)
 
         await expect(
             createAccountService.use(createAccountDto)
@@ -76,9 +72,7 @@ describe('CreateAccountService', () => {
             balance: 100,
         })
         const domainError = new DomainError('Invalid account state')
-        ;(mockAccountRepository.createAccount as Mock).mockRejectedValue(
-            domainError
-        )
+        ;(mockAccountRepository.save as Mock).mockRejectedValue(domainError)
 
         await expect(
             createAccountService.use(createAccountDto)
@@ -94,9 +88,7 @@ describe('CreateAccountService', () => {
             balance: 100,
         })
         const unexpectedError = new Error('Something unexpected happened')
-        ;(mockAccountRepository.createAccount as Mock).mockRejectedValue(
-            unexpectedError
-        )
+        ;(mockAccountRepository.save as Mock).mockRejectedValue(unexpectedError)
 
         await expect(
             createAccountService.use(createAccountDto)
