@@ -1,0 +1,69 @@
+import {
+    UnitOfWork,
+    AccountRepository,
+    TransactionRepository,
+} from '../../../domain/finance-management'
+import mongoose, { ClientSession } from 'mongoose'
+import { DatabaseError } from '../../../utils/errors'
+import { MongoAccountRepository } from './mongo-account-repository'
+import { MongooseTransactionRepository } from './mongo-transaction-repository'
+
+export class MongoUnitWork implements UnitOfWork {
+    private session: ClientSession | undefined = undefined
+    private accountRepository: AccountRepository | undefined = undefined
+    private transactionRepository: TransactionRepository | undefined = undefined
+
+    constructor(private readonly connection: mongoose.Connection) {}
+
+    async commit(): Promise<void> {
+        if (!this.session) {
+            throw new DatabaseError('No active session to commit')
+        }
+
+        await this.session.commitTransaction()
+    }
+
+    async endSession(): Promise<void> {
+        if (this.session) {
+            this.session.endSession()
+            this.session = undefined
+        }
+    }
+
+    getTransactionRepository(): TransactionRepository {
+        if (!this.session) {
+            throw new DatabaseError(
+                'Session not started.  Start a session before getting the repository.'
+            )
+        }
+        this.transactionRepository =
+            this.transactionRepository ||
+            new MongooseTransactionRepository(this.connection, this.session)
+        return this.transactionRepository
+    }
+
+    getAccountRepository(): AccountRepository {
+        if (!this.session) {
+            throw new DatabaseError(
+                'Session not started.  Start a session before getting the repository.'
+            )
+        }
+        this.accountRepository =
+            this.accountRepository ||
+            new MongoAccountRepository(this.connection, this.session)
+        return this.accountRepository
+    }
+
+    async rollback(): Promise<void> {
+        if (!this.session) {
+            throw new DatabaseError('No active session to rollback')
+        }
+
+        this.session.abortTransaction()
+    }
+
+    async startSession(): Promise<void> {
+        this.session = await this.connection.startSession()
+        this.session.startTransaction()
+    }
+}

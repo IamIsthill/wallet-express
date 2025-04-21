@@ -26,9 +26,13 @@ export class DepositToAccountService {
                 throw new AccountNotFoundError(dto.accountId)
             }
 
+            // Create a deposit transaction, return will have an undefined id
             const depositTransaction = account.deposit(dto.depositAmount)
             const savedTransaction =
-                await this.transactionRepo.createTransaction(depositTransaction)
+                await this.transactionRepo.save(depositTransaction) // Persist transaction
+            // Add transaction to the account
+            account.addTransaction(savedTransaction)
+            await this.accountRepo.save(account) // save the updated account, transactions with undefined id will not be saved
 
             return new DepositToTransactionResponseDto(savedTransaction)
         } catch (error) {

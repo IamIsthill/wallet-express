@@ -14,8 +14,7 @@ export const mockAccountRepository: AccountRepository = {
 }
 
 export const mockTransactionRepository: TransactionRepository = {
-    createTransaction: vi.fn(),
-    deleteTransaction: vi.fn(),
-    getTransactionById: vi.fn(),
-    updateTransaction: vi.fn(),
+    save: vi.fn(),
+    delete: vi.fn(),
+    getById: vi.fn(),
 }

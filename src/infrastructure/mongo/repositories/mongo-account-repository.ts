@@ -15,13 +15,22 @@ import {
 } from '../types'
 
 export class MongoAccountRepository implements AccountRepository {
+    constructor(
+        private readonly connection: mongoose.Connection,
+        private readonly session: mongoose.ClientSession
+    ) {}
     async createAccount(account: Account) {
         try {
-            const mongooseAccount = await AccountModel.create({
-                name: account.name,
-                balance: account.balance.value,
-                transactions: [],
-            })
+            const mongooseAccount = await AccountModel.create(
+                [
+                    {
+                        name: account.name,
+                        balance: account.balance.value,
+                        transactions: [],
+                    },
+                ],
+                { session: this.session }
+            ).then((docs) => docs[0])
             return AccountMapper.toAccount(mongooseAccount)
         } catch (error) {
             if (
@@ -90,18 +99,24 @@ export class MongoAccountRepository implements AccountRepository {
 
     async save(account: Account): Promise<Account> {
         try {
-            const existingAccount = await AccountModel.findById(account.id)
+            const existingAccount = await AccountModel.findById(
+                account.id,
+                null,
+                { session: this.session }
+            )
 
             let persistedAccount: MongooseAccountDocument
 
             if (existingAccount) {
                 existingAccount.name = account.name
                 existingAccount.balance = account.balance.value
-                existingAccount.transactions = account.transactions.map(
-                    (transaction) =>
-                        new mongoose.Types.ObjectId(transaction.id!)
+                account.transactions = account.transactions.filter(
+                    (transaction) => transaction.id !== undefined
                 )
-                await existingAccount.save()
+                existingAccount.transactions = account.transactions.map(
+                    (transaction) => new mongoose.Types.ObjectId(transaction.id)
+                )
+                await existingAccount.save({ session: this.session })
                 persistedAccount = existingAccount
             } else {
                 const newAccount = new AccountModel({
@@ -112,7 +127,7 @@ export class MongoAccountRepository implements AccountRepository {
                             new mongoose.Types.ObjectId(transaction.id!)
                     ),
                 })
-                await newAccount.save()
+                await newAccount.save({ session: this.session })
                 persistedAccount = newAccount
             }
 

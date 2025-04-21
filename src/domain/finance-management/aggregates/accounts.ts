@@ -34,6 +34,10 @@ export class Account {
         return transaction
     }
 
+    public addTransaction(transaction: Transaction) {
+        this.transactions.push(transaction)
+    }
+
     public withdraw(amount: number): Transaction {
         this.ensureIdExists()
         const amt = Amount.create(amount)
