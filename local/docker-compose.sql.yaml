@@ -1,0 +1,21 @@
+services:
+    db:
+        image: postgres:17.4-alpine3.21
+        restart: always
+        environment:
+            - POSTGRES_USER=example
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=mydatabase
+        ports:
+            - '5432:5432'
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        networks:
+            - mynetwork
+
+volumes:
+    pg_data:
+
+networks:
+    mynetwork:
+        driver: bridge

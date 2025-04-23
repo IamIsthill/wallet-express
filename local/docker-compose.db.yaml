@@ -1,12 +1,36 @@
 services:
-    mongo:
+    mongo1:
         image: mongo:6
-        container_name: mongo-replica
+        container_name: mongo1
         ports:
             - 27017:27017
-        command: ['--replSet', 'rs0', '--bind_ip_all']
+        command: mongod --replSet rs0 --bind_ip_all
         volumes:
-            - mongo_data:/data/db
+            - mongo_data1:/data/db
+        networks:
+            - mongo-net
+
+    mongo-setup:
+        image: mongo:6
+        depends_on:
+            - mongo1
+        networks:
+            - mongo-net
+        entrypoint: ['bash', '-c']
+        command: >
+            "
+            sleep 10 &&
+            mongosh --host mongo1 --eval '
+            rs.initiate({
+              _id: \"rs0\",
+              members: [
+                { _id: 0, host: \"localhost:27017\" },
+              ]
+            })'
+            "
+
+networks:
+    mongo-net:
 
 volumes:
-    mongo_data:
+    mongo_data1:
