@@ -10,7 +10,7 @@ import {
     ServiceError,
     DatabaseError,
 } from '../../../../src/utils/errors'
-import { mockAccountRepository } from './setup'
+import { mockAccountRepository, mockUnitWork } from './setup'
 
 describe('CreateAccountService', () => {
     let createAccountService: CreateAccountService
@@ -18,7 +18,7 @@ describe('CreateAccountService', () => {
     beforeEach(() => {
         // Clear all mocks before each test
         vi.clearAllMocks()
-        createAccountService = new CreateAccountService(mockAccountRepository)
+        createAccountService = new CreateAccountService(mockUnitWork)
     })
 
     it('should create an Account entity and return a CreateAccountResponseDto on success', async () => {

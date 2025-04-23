@@ -75,4 +75,18 @@ export class MongoUnitWork implements UnitOfWork {
     private isSessionActive() {
         return this.session != undefined && this.session?.inTransaction()
     }
+
+    async transact<T>(worker: (uow: this) => Promise<T>): Promise<T> {
+        try {
+            await this.startSession()
+            const results = await worker(this)
+            await this.commit()
+            return results
+        } catch (error) {
+            await this.rollback()
+            throw error
+        } finally {
+            await this.endSession()
+        }
+    }
 }

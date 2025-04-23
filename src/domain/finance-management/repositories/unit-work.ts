@@ -8,4 +8,5 @@ export interface UnitOfWork {
     endSession(): Promise<void>
     getAccountRepository(): AccountRepository
     getTransactionRepository(): TransactionRepository
+    transact<T>(worker: (uow: UnitOfWork) => Promise<T>): Promise<T>
 }

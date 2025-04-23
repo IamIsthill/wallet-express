@@ -1,4 +1,4 @@
-import { AccountRepository, Account } from '../../../domain/finance-management'
+import { Account, UnitOfWork } from '../../../domain/finance-management'
 import { CreateAccountDto, CreateAccountResponseDto } from '../dto'
 import {
     DomainError,
@@ -8,22 +8,25 @@ import {
 } from '../../../utils/errors'
 
 export class CreateAccountService {
-    constructor(private readonly repo: AccountRepository) {}
+    constructor(private readonly unitWork: UnitOfWork) {}
 
     public async use(dto: CreateAccountDto) {
-        try {
-            const account = new Account(undefined, dto.name, dto.balance)
-            const savedAccount = await this.repo.save(account)
-            const response = new CreateAccountResponseDto(savedAccount)
-            return response
-        } catch (error: unknown) {
-            if (
-                error instanceof DatabaseError ||
-                error instanceof DomainError
-            ) {
-                throw new ServiceError(error.message, { cause: error })
+        return await this.unitWork.transact(async () => {
+            try {
+                const repo = this.unitWork.getAccountRepository()
+                const account = new Account(undefined, dto.name, dto.balance)
+                const savedAccount = await repo.save(account)
+                const response = new CreateAccountResponseDto(savedAccount)
+                return response
+            } catch (error: unknown) {
+                if (
+                    error instanceof DatabaseError ||
+                    error instanceof DomainError
+                ) {
+                    throw new ServiceError(error.message, { cause: error })
+                }
+                throw new UnknownServiceError(error)
             }
-            throw new UnknownServiceError(error)
-        }
+        })
     }
 }
