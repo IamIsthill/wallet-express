@@ -29,15 +29,11 @@ describe('GetAccountService', () => {
             'Savings Account',
             Balance.create(100)
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
 
         const response = await getAccountService.use(getAccountDto)
 
-        expect(
-            mockAccountRepository.getAccountByAccountId
-        ).toHaveBeenCalledWith('account-id')
+        expect(mockAccountRepository.getById).toHaveBeenCalledWith('account-id')
         expect(response).toBeInstanceOf(GetAccountResponseDto)
         expect(response.id).toBe('account-id')
         expect(response.name).toBe('Savings Account')
@@ -48,9 +44,7 @@ describe('GetAccountService', () => {
     it('should throw an AccountNotFoundError when no account is found', async () => {
         const getAccountDto = new GetAccountDto('not-existing-id')
         const mockReturn = undefined
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockReturn)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockReturn)
 
         await expect(getAccountService.use(getAccountDto)).rejects.toThrow(
             AccountNotFoundError
@@ -61,9 +55,9 @@ describe('GetAccountService', () => {
         const getAccountDto = new GetAccountDto('account-id')
         const databaseError = new DatabaseError('Something went wrong')
 
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockRejectedValue(databaseError)
+        ;(mockAccountRepository.getById as Mock).mockRejectedValue(
+            databaseError
+        )
 
         await expect(getAccountService.use(getAccountDto)).rejects.toThrow(
             ServiceError
@@ -77,9 +71,7 @@ describe('GetAccountService', () => {
         const getAccountDto = new GetAccountDto('account-id')
         const domainError = new DomainError('Something went wrong')
 
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockRejectedValue(domainError)
+        ;(mockAccountRepository.getById as Mock).mockRejectedValue(domainError)
 
         await expect(getAccountService.use(getAccountDto)).rejects.toThrow(
             ServiceError
@@ -93,9 +85,7 @@ describe('GetAccountService', () => {
         const getAccountDto = new GetAccountDto('account-id')
         const unknownError = new Error('Something went wrong')
 
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockRejectedValue(unknownError)
+        ;(mockAccountRepository.getById as Mock).mockRejectedValue(unknownError)
 
         await expect(getAccountService.use(getAccountDto)).rejects.toThrow(
             UnknownServiceError

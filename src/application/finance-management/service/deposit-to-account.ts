@@ -18,9 +18,7 @@ export class DepositToAccountService {
 
     async use(dto: DepositToAccountDto) {
         try {
-            const account = await this.accountRepo.getAccountByAccountId(
-                dto.accountId
-            )
+            const account = await this.accountRepo.getById(dto.accountId)
 
             if (!account) {
                 throw new AccountNotFoundError(dto.accountId)

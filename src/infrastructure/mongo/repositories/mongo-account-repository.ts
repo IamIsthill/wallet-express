@@ -50,9 +50,7 @@ export class MongoAccountRepository implements AccountRepository {
         throw new NotImplementedError()
     }
 
-    async getAccountByAccountId(
-        accountId: string
-    ): Promise<Account | undefined> {
+    async getById(accountId: string): Promise<Account | undefined> {
         try {
             const account = await AccountModel.findById(accountId).session(
                 this.session

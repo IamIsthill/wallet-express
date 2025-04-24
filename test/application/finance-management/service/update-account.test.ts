@@ -33,15 +33,11 @@ describe('UpdateAccountService', () => {
             'old name',
             Balance.create(100)
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
 
         const result = await service.use(dto)
 
-        expect(
-            mockAccountRepository.getAccountByAccountId
-        ).toHaveBeenCalledWith('account-id')
+        expect(mockAccountRepository.getById).toHaveBeenCalledWith('account-id')
         expect(mockAccountRepository.save).toHaveBeenCalledWith(
             expect.objectContaining({
                 name: 'new name',
@@ -65,15 +61,11 @@ describe('UpdateAccountService', () => {
             'old name',
             Balance.create(100)
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
 
         const result = await service.use(dto)
 
-        expect(
-            mockAccountRepository.getAccountByAccountId
-        ).toHaveBeenCalledWith('account-id')
+        expect(mockAccountRepository.getById).toHaveBeenCalledWith('account-id')
         expect(mockAccountRepository.save).toHaveBeenCalledWith(
             expect.objectContaining({
                 name: 'old name',
@@ -92,14 +84,12 @@ describe('UpdateAccountService', () => {
     it('should throw AccountNotFoundError if accountId was not found', async () => {
         const dto = new UpdateAccountDto({ accountId: 'not-existing-id' })
         const error = undefined
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(error)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(error)
 
         await expect(service.use(dto)).rejects.toThrow(AccountNotFoundError)
-        expect(
-            mockAccountRepository.getAccountByAccountId
-        ).toHaveBeenCalledWith('not-existing-id')
+        expect(mockAccountRepository.getById).toHaveBeenCalledWith(
+            'not-existing-id'
+        )
     })
 
     it('should throw a ServiceError with the DatabaseError cause if the repository throws a DatabaseError', async () => {
@@ -110,9 +100,7 @@ describe('UpdateAccountService', () => {
             'old name',
             Balance.create(100)
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockAccountRepository.save as Mock).mockRejectedValue(error)
 
         await expect(service.use(dto)).rejects.toThrow(ServiceError)
@@ -127,9 +115,7 @@ describe('UpdateAccountService', () => {
             'old name',
             Balance.create(100)
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockAccountRepository.save as Mock).mockRejectedValue(error)
 
         await expect(service.use(dto)).rejects.toThrow(ServiceError)
@@ -144,9 +130,7 @@ describe('UpdateAccountService', () => {
             'old name',
             Balance.create(100)
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockAccountRepository.save as Mock).mockRejectedValue(error)
 
         await expect(service.use(dto)).rejects.toThrow(UnknownServiceError)

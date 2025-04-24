@@ -16,13 +16,17 @@ import '../models/associations'
 import { Transaction as T } from 'sequelize'
 
 export class PostgreAccountRepository implements AccountRepository {
-    constructor(private readonly transaction: T) {}
+    private readonly transaction: T | undefined = undefined
+    constructor(transaction: T | undefined = undefined) {
+        this.transaction = transaction
+    }
     async deleteAccount(accountId: string): Promise<void> {
         try {
             await AccountModel.destroy({
                 where: {
                     id: accountId,
                 },
+                transaction: this.transaction,
             })
         } catch (error) {
             if (error instanceof BaseError) {
@@ -79,7 +83,7 @@ export class PostgreAccountRepository implements AccountRepository {
         }
     }
 
-    getAccountByAccountId(accountId: string): Promise<Account | undefined> {
+    getById(accountId: string): Promise<Account | undefined> {
         throw new NotImplementedError()
     }
 }

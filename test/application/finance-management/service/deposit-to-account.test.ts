@@ -47,9 +47,7 @@ describe('DepositToAccountService', () => {
             Amount.create(100),
             'account-id'
         )
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockTransactionRepository.save as Mock).mockResolvedValue(
             mockTransaction
         )
@@ -88,9 +86,7 @@ describe('DepositToAccountService', () => {
             depositAmount: 100,
         })
         const mockReturn = undefined
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockReturn)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockReturn)
 
         await expect(depositToAccountService.use(depositDto)).rejects.toThrow(
             AccountNotFoundError
@@ -108,9 +104,7 @@ describe('DepositToAccountService', () => {
             Balance.create(100)
         )
         const databaseError = new DatabaseError('Something went wrong')
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockTransactionRepository.save as Mock).mockRejectedValue(
             databaseError
         )
@@ -135,9 +129,7 @@ describe('DepositToAccountService', () => {
             Balance.create(100)
         )
         const error = new DomainError('Something went wrong')
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockTransactionRepository.save as Mock).mockRejectedValue(error)
 
         await expect(depositToAccountService.use(dto)).rejects.toThrow(
@@ -160,9 +152,7 @@ describe('DepositToAccountService', () => {
             Balance.create(100)
         )
         const error = new Error('Something went wrong')
-        ;(
-            mockAccountRepository.getAccountByAccountId as Mock
-        ).mockResolvedValue(mockAccount)
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(mockAccount)
         ;(mockTransactionRepository.save as Mock).mockRejectedValue(error)
 
         await expect(depositToAccountService.use(dto)).rejects.toThrow(

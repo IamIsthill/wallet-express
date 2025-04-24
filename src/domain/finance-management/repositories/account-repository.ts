@@ -3,7 +3,7 @@ import { Transaction } from '../entities'
 
 export interface AccountRepository {
     deleteAccount(accountId: string): Promise<void>
-    getAccountByAccountId(accountId: string): Promise<Account | undefined>
+    getById(accountId: string): Promise<Account | undefined>
     getAllAccounts(): Promise<Account[]>
     findTransactionsByAccountId(accountId: string): Promise<Transaction[]>
     save(account: Account): Promise<Account>

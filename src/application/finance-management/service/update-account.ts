@@ -43,7 +43,7 @@ export class UpdateAccountService {
 
     async use(dto: UpdateAccountDto) {
         try {
-            const account = await this.repo.getAccountByAccountId(dto.accountId)
+            const account = await this.repo.getById(dto.accountId)
 
             if (!account) {
                 throw new AccountNotFoundError(dto.accountId)
