@@ -4,8 +4,10 @@ import {
     InferAttributes,
     InferCreationAttributes,
     CreationOptional,
+    NonAttribute,
 } from 'sequelize'
 import { sequelize } from '../connection'
+import { ITransactionModel } from '../interface'
 
 export class AccountModel extends Model<
     InferAttributes<AccountModel>,
@@ -14,6 +16,7 @@ export class AccountModel extends Model<
     declare id: CreationOptional<string>
     declare name: string
     declare balance: number
+    declare transactions: NonAttribute<ITransactionModel[]>
 }
 
 AccountModel.init(

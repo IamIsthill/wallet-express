@@ -28,6 +28,6 @@ export class CreateAccountResponseDto {
         this.id = account.id!
         this.name = account.name
         this.balance = account.balance.value
-        this.transactions = account.transactions
+        this.transactions = account.getTransactions()
     }
 }

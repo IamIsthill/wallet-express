@@ -5,7 +5,9 @@ import {
     InferAttributes,
     InferCreationAttributes,
     CreationOptional,
+    NonAttribute,
 } from 'sequelize'
+import { IAccountModel } from '../interface'
 
 export class TransactionModel extends Model<
     InferAttributes<TransactionModel>,
@@ -16,6 +18,10 @@ export class TransactionModel extends Model<
     declare targetAccountId?: string
     declare type: 'transfer' | 'income' | 'expense'
     declare amount: number
+    declare targetAccount?: NonAttribute<IAccountModel>
+    declare account: NonAttribute<IAccountModel>
+    declare updatedAt: CreationOptional<Date>
+    declare createdAt: CreationOptional<Date>
 }
 
 TransactionModel.init(
@@ -40,6 +46,14 @@ TransactionModel.init(
         },
         amount: {
             type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
             allowNull: false,
         },
     },

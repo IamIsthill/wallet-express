@@ -33,7 +33,10 @@ describe('GetAccountService', () => {
 
         const response = await getAccountService.use(getAccountDto)
 
-        expect(mockAccountRepository.getById).toHaveBeenCalledWith('account-id')
+        expect(mockAccountRepository.getById).toHaveBeenCalledWith(
+            'account-id',
+            { hydrate: false }
+        )
         expect(response).toBeInstanceOf(GetAccountResponseDto)
         expect(response.id).toBe('account-id')
         expect(response.name).toBe('Savings Account')

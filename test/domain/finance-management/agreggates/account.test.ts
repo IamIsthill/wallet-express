@@ -61,6 +61,7 @@ describe('Account', () => {
         expect(tx.type.value).toBe('income')
         expect(tx.amount.value).toBe(200)
         expect(account.getTransactions()).toContainEqual(tx)
+        expect(account.getTransactionIds()).toContainEqual(undefined)
     })
 
     it('should withdraw an amount and decrease balance', () => {
@@ -70,6 +71,7 @@ describe('Account', () => {
         expect(account.balance.value).toBe(300)
         expect(tx.type.value).toBe('expense')
         expect(tx.amount.value).toBe(200)
+        expect(account.getTransactionIds()).toContainEqual(undefined)
     })
 
     it('should throw error when withdrawing more than balance', () => {
@@ -135,5 +137,24 @@ describe('Account', () => {
         expect(() =>
             account.changeTransactionTypeOf(tx.id!, TransactionType.transfer())
         ).toThrow(MissingTargetAccountError)
+    })
+
+    it('should set hydrated transactions and transactionIds correctly', () => {
+        const account = new Account('1', 'Test', Balance.create(500))
+        const tx = account.deposit(100)
+
+        const createdAccount = new Account('2', 'New', Balance.create(300))
+        createdAccount.setTransactions([tx])
+
+        expect(createdAccount.getTransactions()).toContainEqual(tx)
+        expect(createdAccount.getTransactionIds()).toContain(undefined)
+    })
+
+    it('should set only transactionIds when passed string ids', () => {
+        const account = new Account('1', 'Test', Balance.create(500))
+        account.setTransactions(['tx-id-1', 'tx-id-2'])
+
+        expect(account.getTransactions()).toHaveLength(0)
+        expect(account.getTransactionIds()).toEqual(['tx-id-1', 'tx-id-2'])
     })
 })

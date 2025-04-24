@@ -1,4 +1,4 @@
-import { AccountModel } from '../models'
+import { AccountModel, TransactionModel } from '../models'
 import {
     Account,
     AccountRepository,
@@ -14,6 +14,7 @@ import {
 import { NotImplementedError } from '../../../utils/errors'
 import '../models/associations'
 import { Transaction as T } from 'sequelize'
+import { AccountMapper } from '../mappers'
 
 export class PostgreAccountRepository implements AccountRepository {
     private readonly transaction: T | undefined = undefined
@@ -83,7 +84,31 @@ export class PostgreAccountRepository implements AccountRepository {
         }
     }
 
-    getById(accountId: string): Promise<Account | undefined> {
-        throw new NotImplementedError()
+    async getById(
+        accountId: string,
+        options?: { hydrate?: boolean }
+    ): Promise<Account | undefined> {
+        try {
+            const include = [
+                {
+                    model: TransactionModel,
+                    as: 'transactions',
+                    attributes: options?.hydrate ? undefined : ['id'], // Only select 'id' if not hydrating
+                },
+            ]
+
+            const account = await AccountModel.findByPk(accountId, {
+                include: include,
+            })
+            if (!account) {
+                return undefined
+            }
+            return AccountMapper.toAccount(account)
+        } catch (err) {
+            if (err instanceof DomainError || err instanceof BaseError) {
+                throw new DatabaseError(err.message, { cause: err })
+            }
+            throw new UnknownDatabaseError(err)
+        }
     }
 }

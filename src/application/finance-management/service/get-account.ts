@@ -12,7 +12,9 @@ export class GetAccountService {
 
     public async use(dto: GetAccountDto) {
         try {
-            const account = await this.repo.getById(dto.accountId)
+            const account = await this.repo.getById(dto.accountId, {
+                hydrate: false,
+            })
 
             if (!account) {
                 throw new AccountNotFoundError(dto.accountId)

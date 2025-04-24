@@ -10,8 +10,8 @@ export class Account {
     public id: string | undefined
     public name: string
     public balance: Balance
-    public transactions: Transaction[] = []
-    public transactionIds: string[] = []
+    private hydratedTransactions: Transaction[] = []
+    private transactionIds: string[] = []
 
     constructor(id: string | undefined, name: string, balance: Balance) {
         this.id = id
@@ -19,8 +19,23 @@ export class Account {
         this.balance = balance
     }
 
-    getTransactions(): Transaction[] {
-        return [...this.transactions]
+    public getTransactions(): Transaction[] {
+        return [...this.hydratedTransactions]
+    }
+    public getTransactionIds(): string[] {
+        return [...this.transactionIds]
+    }
+
+    public setTransactions(transactions: Transaction[] | string[]) {
+        if (typeof transactions[0] == 'string') {
+            this.transactionIds = transactions as string[]
+            this.hydratedTransactions = []
+        } else {
+            this.hydratedTransactions = transactions as Transaction[]
+            this.transactionIds = (transactions as Transaction[]).map(
+                (tx) => tx.id!
+            )
+        }
     }
 
     public deposit(amount: number): Transaction {
@@ -36,7 +51,8 @@ export class Account {
     }
 
     public addTransaction(transaction: Transaction) {
-        this.transactions.push(transaction)
+        this.hydratedTransactions.push(transaction)
+        this.transactionIds.push(transaction.id!)
     }
 
     public withdraw(amount: number): Transaction {
@@ -122,7 +138,7 @@ export class Account {
     }
 
     private findTransaction(transactionId: string): Transaction | undefined {
-        const transaction = this.transactions.find(
+        const transaction = this.hydratedTransactions.find(
             (item) => item.id == transactionId
         )
         return transaction
@@ -146,7 +162,7 @@ export class Account {
             this.id!,
             targetAccountId
         )
-        this.transactions.push(transaction)
+        this.addTransaction(transaction)
         return transaction
     }
 

@@ -27,7 +27,9 @@ export default defineConfig([
             "src/domain/finance-management/repositories/unit-work.ts",
             "src/infrastructure/mongo/repositories/mongo-unit-work.ts",
             "src/infrastructure/postgre/repositories/postgre-account-repository.ts",
-            "src/infrastructure/postgre/repositories/postgre-unit-work.ts"
+            "src/infrastructure/postgre/repositories/postgre-unit-work.ts",
+            "src/infrastructure/postgre/repositories/postgre-transaction-repository.ts"
+
 
 
         ]
@@ -41,6 +43,7 @@ export default defineConfig([
         "src/domain/finance-management/repositories/unit-work.ts",
         "src/infrastructure/mongo/repositories/mongo-unit-work.ts",
         "src/infrastructure/postgre/repositories/postgre-account-repository.ts",
-        "src/infrastructure/postgre/repositories/postgre-unit-work.ts"
+        "src/infrastructure/postgre/repositories/postgre-unit-work.ts",
+        "src/infrastructure/postgre/repositories/postgre-transaction-repository.ts"
     ]),
 ]);

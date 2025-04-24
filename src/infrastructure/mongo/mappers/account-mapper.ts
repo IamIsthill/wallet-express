@@ -26,8 +26,10 @@ export const AccountMapper = {
         )
 
         if (transactions.length > 0) {
-            account.transactions = transactions.map((transaction) =>
-                TransactionMapper.mapper(transaction)
+            account.setTransactions(
+                transactions.map((transaction) =>
+                    TransactionMapper.mapper(transaction)
+                )
             )
         }
 

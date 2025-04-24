@@ -1,5 +1,9 @@
 import { AccountModel } from '../models'
-import { Account, AccountRepository } from '../../../domain/finance-management'
+import {
+    Account,
+    AccountRepository,
+    Transaction,
+} from '../../../domain/finance-management'
 import { AccountMapper, TransactionMapper } from '../mappers'
 import mongoose from 'mongoose'
 import { CannotFindError } from '../../shared/errors'
@@ -81,15 +85,15 @@ export class MongoAccountRepository implements AccountRepository {
             ).session(this.session)
 
             let persistedAccount: MongooseAccountDocument
+            const transactions = account.getTransactions()
 
             if (existingAccount) {
                 existingAccount.name = account.name
                 existingAccount.balance = account.balance.value
-                account.transactions = account.transactions.filter(
-                    (transaction) => transaction.id !== undefined
-                )
-                existingAccount.transactions = account.transactions.map(
-                    (transaction) => new mongoose.Types.ObjectId(transaction.id)
+                account.setTransactions(
+                    transactions.filter(
+                        (transaction) => transaction.id !== undefined
+                    )
                 )
                 await existingAccount.save({ session: this.session })
                 persistedAccount = existingAccount
@@ -97,10 +101,12 @@ export class MongoAccountRepository implements AccountRepository {
                 const newAccount = new AccountModel({
                     name: account.name,
                     balance: account.balance.value,
-                    transactions: account.transactions.map(
-                        (transaction) =>
-                            new mongoose.Types.ObjectId(transaction.id!)
-                    ),
+                    transactions: account
+                        .getTransactions()
+                        .map(
+                            (transaction) =>
+                                new mongoose.Types.ObjectId(transaction.id!)
+                        ),
                 })
                 await newAccount.save({ session: this.session })
                 persistedAccount = newAccount

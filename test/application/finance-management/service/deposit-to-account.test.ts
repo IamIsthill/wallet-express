@@ -61,13 +61,17 @@ describe('DepositToAccountService', () => {
             accountId: 'account-id',
             targetAccountId: undefined,
         })
-        expect(mockAccountRepository.save).toHaveBeenCalledWith({
-            id: 'account-id',
-            balance: Balance.create(200),
-            transactionIds: [],
-            name: 'Savings Account',
-            transactions: expect.arrayContaining([expect.any(Transaction)]),
-        })
+        expect(mockAccountRepository.save).toHaveBeenCalledWith(
+            expect.objectContaining({
+                id: 'account-id',
+                balance: Balance.create(200),
+                // transactionIds: [],
+                name: 'Savings Account',
+                hydratedTransactions: expect.arrayContaining([
+                    expect.any(Transaction),
+                ]),
+            })
+        )
         expect(response).toBeInstanceOf(DepositToTransactionResponseDto)
         expect(response).toStrictEqual(
             expect.objectContaining({

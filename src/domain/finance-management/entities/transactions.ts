@@ -3,6 +3,7 @@ import {
     MissingTargetAccountError,
     TargetAccountNotAllowedError,
 } from '../../shared/errors'
+import { Account } from '../aggregates'
 
 export class Transaction {
     public readonly id: string | undefined
@@ -10,6 +11,8 @@ export class Transaction {
     public amount: Amount
     public accountId: string
     public targetAccountId?: string
+    public account?: Account
+    public targetAccount?: Account
 
     constructor(
         id: string | undefined,
@@ -30,6 +33,12 @@ export class Transaction {
         this.amount = amount
         this.accountId = accountId
         this.targetAccountId = targetAccountId
+    }
+    public setAccount(account: Account) {
+        this.account = account
+    }
+    public setTargetAccount(account: Account | undefined) {
+        this.targetAccount = account
     }
 
     public equals(other: Transaction): boolean {
