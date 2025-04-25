@@ -1,18 +1,12 @@
-import { z } from 'zod'
-import { validate } from '../../../utils/lib'
 import { Account } from '../../../domain/finance-management'
+import { AccountIdDto } from './account-id.dto'
 
-export class GetAccountDto {
-    public readonly accountId: string
-    private schema = z.object({
-        accountId: z
-            .string()
-            .min(1, 'AccountId is required and must be a string'),
-    })
-
+export class GetAccountDto extends AccountIdDto {
     constructor(accountId: string) {
-        const data = validate(this.schema, { accountId })
-        this.accountId = data.accountId
+        super(
+            { accountId: accountId },
+            'AccountId is required and must be a string'
+        )
     }
 }
 
