@@ -4,6 +4,7 @@ import { AccountModel } from './account-model'
 AccountModel.hasMany(TransactionModel, {
     foreignKey: 'accountId',
     as: 'transactions',
+    onDelete: 'CASCADE',
 })
 TransactionModel.belongsTo(AccountModel, {
     foreignKey: 'accountId',

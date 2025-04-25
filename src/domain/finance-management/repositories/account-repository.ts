@@ -2,7 +2,7 @@ import { Account } from '../aggregates'
 import { Transaction } from '../entities'
 
 export interface AccountRepository {
-    deleteAccount(accountId: string): Promise<void>
+    delete(accountId: string): Promise<void>
     getById(
         accountId: string,
         options?: { hydrate?: boolean }

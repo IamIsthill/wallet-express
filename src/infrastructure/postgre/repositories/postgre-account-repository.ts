@@ -22,7 +22,7 @@ export class PostgreAccountRepository implements AccountRepository {
     constructor(transaction: T | undefined = undefined) {
         this.transaction = transaction
     }
-    async deleteAccount(accountId: string): Promise<void> {
+    async delete(accountId: string): Promise<void> {
         try {
             await AccountModel.destroy({
                 where: {
