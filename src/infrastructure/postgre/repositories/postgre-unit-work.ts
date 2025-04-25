@@ -7,6 +7,7 @@ import { Transaction } from 'sequelize'
 import { DatabaseError } from '../../../utils/errors'
 import { PostgreAccountRepository } from './postgre-account-repository'
 import { Sequelize } from 'sequelize'
+import { PostgreTransactionRepository } from './postgre-transaction-repository'
 
 export class PostgreUnitWork implements UnitOfWork {
     private accountRepository: AccountRepository | undefined = undefined
@@ -27,14 +28,20 @@ export class PostgreUnitWork implements UnitOfWork {
             this.transactionRepository = undefined
         }
     }
+
     async rollback(): Promise<void> {
         this.isTransactionActive()
         await this.transaction!.rollback()
     }
+
     async startSession(): Promise<void> {
         this.transaction = await this.sequelize.transaction()
         this.accountRepository = new PostgreAccountRepository(this.transaction)
+        this.transactionRepository = new PostgreTransactionRepository(
+            this.transaction
+        )
     }
+
     async transact<T>(worker: (uow: this) => Promise<T>): Promise<T> {
         try {
             await this.startSession()

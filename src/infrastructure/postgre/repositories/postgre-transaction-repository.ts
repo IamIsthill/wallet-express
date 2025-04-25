@@ -17,7 +17,9 @@ import {
 export class PostgreTransactionRepository implements TransactionRepository {
     private readonly transaction: T | undefined = undefined
 
-    constructor(transaction?: T | undefined) {}
+    constructor(transaction?: T | undefined) {
+        this.transaction = transaction
+    }
 
     async delete(account: Account, transactionId: string): Promise<void> {
         throw new NotImplementedError()
@@ -37,15 +39,20 @@ export class PostgreTransactionRepository implements TransactionRepository {
                 existingTransaction.type = type.value
                 existingTransaction.targetAccountId = targetAccountId
                 existingTransaction.amount = amount.value
-                await existingTransaction.save()
+                await existingTransaction.save({
+                    transaction: this.transaction,
+                })
                 persistedTransaction = existingTransaction
             } else {
-                const createdTransaction = await TransactionModel.create({
-                    accountId: accountId,
-                    targetAccountId: targetAccountId,
-                    type: type.value,
-                    amount: amount.value,
-                })
+                const createdTransaction = await TransactionModel.create(
+                    {
+                        accountId: accountId,
+                        targetAccountId: targetAccountId,
+                        type: type.value,
+                        amount: amount.value,
+                    },
+                    { transaction: this.transaction }
+                )
                 persistedTransaction = createdTransaction
             }
             // persistedTransaction = undefined
