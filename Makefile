@@ -1,6 +1,6 @@
 .PHONY: db
 db:
-	mongod --dbpath ~/data/db --logpath ~/data/log/mongodb/mongo.log --replSet rs0 --fork
+	sh ./local/dev.sh
 
 .PHONY: p
 p:
@@ -8,9 +8,7 @@ p:
 
 .PHONY: stopdb
 stopdb:
-	@PID=$$(ps aux | grep -v grep | grep mongod | awk '{print $$2}'); \
-	kill $$PID; \
-	echo 'MongoDB stopped'
+	sh ./local/dev.end.sh
 
 .PHONY: start-dock
 start-dock:
