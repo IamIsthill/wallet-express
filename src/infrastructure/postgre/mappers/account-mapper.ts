@@ -8,6 +8,10 @@ export const AccountMapper = {
             model.name,
             Balance.create(Number(model.balance))
         )
+        const transactions = model.transactions.map((tx) => tx.id)
+
+        account.setTransactions(transactions)
+
         return account
     },
 }

@@ -6,7 +6,7 @@ import { BadRequestError } from '../../errors'
 import { ServiceError } from '../../../../utils/errors'
 import { NextFunction, Request, Response } from 'express'
 import { codes } from '../../../../utils/lib'
-import { PostgreUnitWork, sequelize } from '../../../../infrastructure/postgre'
+import { PostgreUnitWork } from '../../../../infrastructure/postgre'
 
 export const addAccount = async (
     request: Request,
@@ -14,7 +14,7 @@ export const addAccount = async (
     next: NextFunction
 ) => {
     try {
-        const unitWork = new PostgreUnitWork(sequelize)
+        const unitWork = new PostgreUnitWork()
         const service = new CreateAccountService(unitWork)
         const dto = new CreateAccountDto(request.body)
         const createdAccount = await service.use(dto)

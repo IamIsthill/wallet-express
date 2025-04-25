@@ -14,7 +14,8 @@ import {
 import { NotImplementedError } from '../../../utils/errors'
 import '../models/associations'
 import { Transaction as T } from 'sequelize'
-import { AccountMapper } from '../mappers'
+import { AccountMapper, TransactionMapper } from '../mappers'
+import { ITransactionModel } from '../interface'
 
 export class PostgreAccountRepository implements AccountRepository {
     private readonly transaction: T | undefined = undefined
@@ -103,7 +104,14 @@ export class PostgreAccountRepository implements AccountRepository {
             if (!account) {
                 return undefined
             }
-            return AccountMapper.toAccount(account)
+            const mappedAccount = AccountMapper.toAccount(account)
+            if (options?.hydrate) {
+                const transactions = account.transactions.map((tx) =>
+                    TransactionMapper.toTransaction(tx)
+                )
+                mappedAccount.setTransactions(transactions)
+            }
+            return mappedAccount
         } catch (err) {
             if (err instanceof DomainError || err instanceof BaseError) {
                 throw new DatabaseError(err.message, { cause: err })

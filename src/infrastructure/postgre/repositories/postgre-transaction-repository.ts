@@ -13,6 +13,7 @@ import {
     DatabaseError,
     UnknownDatabaseError,
 } from '../../../utils/errors'
+import { ITransactionModel } from '../interface'
 
 export class PostgreTransactionRepository implements TransactionRepository {
     private readonly transaction: T | undefined = undefined
@@ -55,7 +56,6 @@ export class PostgreTransactionRepository implements TransactionRepository {
                 )
                 persistedTransaction = createdTransaction
             }
-            // persistedTransaction = undefined
 
             return TransactionMapper.toTransaction(persistedTransaction)
         } catch (error) {

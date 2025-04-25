@@ -7,7 +7,7 @@ import {
     NonAttribute,
 } from 'sequelize'
 import { sequelize } from '../connection'
-import { ITransactionModel } from '../interface'
+import { TransactionModel } from './transaction-model'
 
 export class AccountModel extends Model<
     InferAttributes<AccountModel>,
@@ -16,7 +16,7 @@ export class AccountModel extends Model<
     declare id: CreationOptional<string>
     declare name: string
     declare balance: number
-    declare transactions: NonAttribute<ITransactionModel[]>
+    declare transactions: NonAttribute<TransactionModel[]>
 }
 
 AccountModel.init(
