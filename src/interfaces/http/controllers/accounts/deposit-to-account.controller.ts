@@ -8,7 +8,6 @@ import { AccountNotFoundError } from '../../../../application/shared/errors'
 import { ServiceError } from '../../../../utils/errors'
 import { BadRequestError, NotFoundError } from '../../errors'
 import { PostgreUnitWork } from '../../../../infrastructure/postgre'
-import { sequelize } from '../../../../infrastructure/postgre'
 
 export const depositToAccount = async (
     request: Request,
@@ -16,8 +15,7 @@ export const depositToAccount = async (
     next: NextFunction
 ) => {
     try {
-        const unitWork = new PostgreUnitWork(sequelize)
-        console.log('dfg')
+        const unitWork = new PostgreUnitWork()
 
         await unitWork.transact(async () => {
             const transactionRepo = unitWork.getTransactionRepository()

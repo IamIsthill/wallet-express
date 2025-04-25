@@ -3,18 +3,17 @@ import {
     TransactionRepository,
     UnitOfWork,
 } from '../../../domain/finance-management'
-import { Transaction } from 'sequelize'
+import { Transaction, Sequelize } from 'sequelize'
 import { DatabaseError } from '../../../utils/errors'
 import { PostgreAccountRepository } from './postgre-account-repository'
-import { Sequelize } from 'sequelize'
 import { PostgreTransactionRepository } from './postgre-transaction-repository'
+import { sequelize } from '../connection'
 
 export class PostgreUnitWork implements UnitOfWork {
     private accountRepository: AccountRepository | undefined = undefined
     private transactionRepository: TransactionRepository | undefined = undefined
     private transaction: Transaction | undefined = undefined
-
-    constructor(private readonly sequelize: Sequelize) {}
+    private sequelize = sequelize
 
     async commit(): Promise<void> {
         this.isTransactionActive()
