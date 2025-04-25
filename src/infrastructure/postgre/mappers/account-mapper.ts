@@ -6,7 +6,7 @@ export const AccountMapper = {
         const account = new Account(
             model.id,
             model.name,
-            Balance.create(model.balance)
+            Balance.create(Number(model.balance))
         )
         return account
     },
