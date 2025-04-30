@@ -1,7 +1,7 @@
-import { AccountIdDto } from './account-id.dto'
+import { AccountId, AccountIdDto } from './id.dto'
 
 export class DeleteAccountDto extends AccountIdDto {
-    constructor(request: { accountId: string }) {
-        super(request)
+    constructor(request: AccountId) {
+        super(request, 'Account id is required to delete an account')
     }
 }

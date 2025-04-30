@@ -1,5 +1,5 @@
 import { Account } from '../../../domain/finance-management'
-import { AccountIdDto } from './account-id.dto'
+import { AccountIdDto } from './id.dto'
 
 export class GetAccountDto extends AccountIdDto {
     constructor(accountId: string) {
