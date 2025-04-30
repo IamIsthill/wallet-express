@@ -13,7 +13,6 @@ import {
     DatabaseError,
     UnknownDatabaseError,
 } from '../../../utils/errors'
-import { ITransactionModel } from '../interface'
 
 export class PostgreTransactionRepository implements TransactionRepository {
     private readonly transaction: T | undefined = undefined
@@ -26,7 +25,20 @@ export class PostgreTransactionRepository implements TransactionRepository {
         throw new NotImplementedError()
     }
     async getById(transactionId: string): Promise<Transaction | undefined> {
-        throw new NotImplementedError()
+        try {
+            const transaction = await TransactionModel.findByPk(transactionId)
+
+            if (!transaction) {
+                return undefined
+            }
+
+            return TransactionMapper.toTransaction(transaction)
+        } catch (error) {
+            if (error instanceof DomainError || error instanceof BaseError) {
+                throw new DatabaseError(error.message, { cause: error })
+            }
+            throw new UnknownDatabaseError(error)
+        }
     }
     async save(transaction: Transaction): Promise<Transaction> {
         try {
