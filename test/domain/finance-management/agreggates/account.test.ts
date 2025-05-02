@@ -70,7 +70,7 @@ describe('Account', () => {
 
         expect(account.balance.value).toBe(300)
         expect(tx.type.value).toBe('expense')
-        expect(tx.amount.value).toBe(200)
+        expect(tx.amount.value).toBe(-200)
         expect(account.getTransactionIds()).toContainEqual(undefined)
     })
 

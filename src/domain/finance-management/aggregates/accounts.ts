@@ -22,6 +22,7 @@ export class Account {
     public getTransactions(): Transaction[] {
         return [...this.hydratedTransactions]
     }
+
     public getTransactionIds(): string[] {
         return [...this.transactionIds]
     }
@@ -57,7 +58,7 @@ export class Account {
 
     public withdraw(amount: number): Transaction {
         this.ensureIdExists()
-        const amt = Amount.create(amount)
+        const amt = Amount.create(amount * -1)
         this.decreaseBalance(amt)
 
         return this.createTransaction(TransactionType.expense(), amt)
@@ -66,7 +67,7 @@ export class Account {
     public transferFunds(amount: number, targetAccountId: string) {
         this.ensureIdExists()
         this.ensureDifferentAccounts(targetAccountId)
-        const amt = Amount.create(amount)
+        const amt = Amount.create(amount * -1)
         this.decreaseBalance(amt)
 
         return this.createTransaction(
@@ -167,10 +168,10 @@ export class Account {
     }
 
     private increaseBalance(amount: Amount) {
-        this.balance = this.balance.increase(amount)
+        this.balance = this.balance.apply(amount)
     }
 
     private decreaseBalance(amount: Amount) {
-        this.balance = this.balance.decrease(amount)
+        this.balance = this.balance.apply(amount)
     }
 }
