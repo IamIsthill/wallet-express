@@ -1,8 +1,8 @@
 import { InvalidAmountError } from '../../shared/errors'
 
 export class Amount {
-    private constructor(private readonly _value: number) {
-        if (_value <= 0) {
+    private constructor(private _value: number) {
+        if (this._value == 0) {
             throw new InvalidAmountError()
         }
     }
@@ -17,5 +17,17 @@ export class Amount {
 
     public equals(other: Amount) {
         return other.value == this.value
+    }
+
+    public isPositive(): boolean {
+        return this._value > 0
+    }
+
+    public isNegative(): boolean {
+        return this._value < 0
+    }
+
+    public negate(): Amount {
+        return new Amount(-this._value)
     }
 }
