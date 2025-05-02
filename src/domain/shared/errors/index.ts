@@ -2,7 +2,7 @@ import { DomainError } from '../../../utils/errors'
 
 export class InvalidAmountError extends DomainError {
     constructor() {
-        super('Amount must be greater than zero')
+        super('Amount cannot be zero')
         this.name = 'InvalidAmountError'
     }
 }

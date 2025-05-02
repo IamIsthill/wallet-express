@@ -1,7 +1,7 @@
 export class TransactionType {
-    public readonly value: 'income' | 'expense' | 'transfer'
+    public readonly value: TransactionTypeEnum
 
-    private constructor(value: 'income' | 'expense' | 'transfer') {
+    private constructor(value: TransactionTypeEnum) {
         this.value = value
     }
 
@@ -15,7 +15,7 @@ export class TransactionType {
         return new TransactionType('transfer')
     }
 
-    static _create(value: 'income' | 'expense' | 'transfer') {
+    static _create(value: TransactionTypeEnum) {
         return new TransactionType(value)
     }
 
@@ -23,3 +23,5 @@ export class TransactionType {
         return other.value == this.value
     }
 }
+
+export type TransactionTypeEnum = 'income' | 'expense' | 'transfer'
