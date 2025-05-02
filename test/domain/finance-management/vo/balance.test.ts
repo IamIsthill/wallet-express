@@ -4,7 +4,6 @@ import {
     InsufficientFundsError,
     NegativeBalanceError,
 } from '../../../../src/domain/shared/errors'
-import { DomainError } from '../../../../src/utils/errors'
 
 describe('Balance', () => {
     it('should create a valid balance', () => {
@@ -60,7 +59,9 @@ describe('Balance.apply', () => {
 
     it('should throw error if resulting balance is negative', () => {
         const balance = Balance.create(100)
-        expect(() => balance.apply(Amount.create(-101))).toThrow(DomainError)
+        expect(() => balance.apply(Amount.create(-101))).toThrow(
+            InsufficientFundsError
+        )
     })
 
     it('should not modify original balance', () => {

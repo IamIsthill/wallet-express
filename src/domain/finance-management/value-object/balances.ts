@@ -3,7 +3,6 @@ import {
     InsufficientFundsError,
     NegativeBalanceError,
 } from '../../shared/errors'
-import { DomainError } from '../../../utils/errors'
 
 export class Balance {
     private constructor(private readonly _value: number) {}
@@ -21,18 +20,14 @@ export class Balance {
 
     increase(amount: Amount): Balance {
         if (amount.value < 0) {
-            throw new DomainError(
-                'Cannot increase balance with a negative amount'
-            )
+            throw new InsufficientFundsError()
         }
         return new Balance(this._value + amount.value)
     }
 
     decrease(amount: Amount): Balance {
         if (amount.value < 0) {
-            throw new DomainError(
-                'Cannot decrease balance with a negative amount'
-            )
+            throw new InsufficientFundsError()
         }
         if (this._value < amount.value) {
             throw new InsufficientFundsError()
@@ -45,7 +40,7 @@ export class Balance {
         const updatedBalance = this.value + amount.value
 
         if (updatedBalance < 0) {
-            throw new DomainError('Balance is insufficient')
+            throw new InsufficientFundsError()
         }
 
         return Balance.create(updatedBalance)
