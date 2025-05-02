@@ -12,9 +12,13 @@ describe('TransactionType', () => {
         expect(type.value).toBe('expense')
     })
 
+    it('should create a inward transfer transaction type', () => {
+        const type = TransactionType.inward_transfer()
+        expect(type.value).toBe('inward_transfer')
+    })
     it('should create a transfer transaction type', () => {
-        const type = TransactionType.transfer()
-        expect(type.value).toBe('transfer')
+        const type = TransactionType.outward_transfer()
+        expect(type.value).toBe('outward_transfer')
     })
 
     it('should recreate transaction type from _create', () => {

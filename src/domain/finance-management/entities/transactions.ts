@@ -21,10 +21,20 @@ export class Transaction {
         accountId: string,
         targetAccountId?: string
     ) {
-        if (type.equals(TransactionType.transfer()) && !targetAccountId) {
+        if (
+            (type.equals(TransactionType.inward_transfer()) ||
+                type.equals(TransactionType.outward_transfer())) &&
+            !targetAccountId
+        ) {
             throw new MissingTargetAccountError()
         }
-        if (type.value !== 'transfer' && targetAccountId) {
+        if (
+            !(
+                type.equals(TransactionType.inward_transfer()) ||
+                type.equals(TransactionType.outward_transfer())
+            ) &&
+            targetAccountId
+        ) {
             throw new TargetAccountNotAllowedError()
         }
 
@@ -63,5 +73,26 @@ export class Transaction {
             accountId: this.accountId,
             targetAccountId: this.targetAccountId,
         }
+    }
+    public static create(
+        id: string | undefined,
+        type: TransactionType,
+        amount: Amount,
+        accountId: string,
+        targetAccountId?: string
+    ) {
+        const isTransfer =
+            type.equals(TransactionType.inward_transfer()) ||
+            type.equals(TransactionType.outward_transfer())
+
+        if (isTransfer && !targetAccountId) {
+            throw new MissingTargetAccountError()
+        }
+
+        if (!isTransfer && targetAccountId) {
+            throw new TargetAccountNotAllowedError()
+        }
+
+        return new Transaction(id, type, amount, accountId, targetAccountId)
     }
 }

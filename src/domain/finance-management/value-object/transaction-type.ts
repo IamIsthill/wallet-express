@@ -11,8 +11,13 @@ export class TransactionType {
     public static expense(): TransactionType {
         return new TransactionType('expense')
     }
-    public static transfer(): TransactionType {
-        return new TransactionType('transfer')
+
+    public static inward_transfer(): TransactionType {
+        return new TransactionType('inward_transfer')
+    }
+
+    public static outward_transfer(): TransactionType {
+        return new TransactionType('outward_transfer')
     }
 
     static _create(value: TransactionTypeEnum) {
@@ -24,4 +29,8 @@ export class TransactionType {
     }
 }
 
-export type TransactionTypeEnum = 'income' | 'expense' | 'transfer'
+export type TransactionTypeEnum =
+    | 'income'
+    | 'expense'
+    | 'inward_transfer'
+    | 'outward_transfer'
