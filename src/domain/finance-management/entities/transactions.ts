@@ -1,7 +1,9 @@
 import { TransactionType, Amount } from '../value-object'
 import {
+    DifferentTargetAccountIdError,
     MissingTargetAccountError,
     TargetAccountNotAllowedError,
+    TargetAccountNotDefinedError,
 } from '../../shared/errors'
 import { Account } from '../aggregates'
 
@@ -81,18 +83,30 @@ export class Transaction {
         accountId: string,
         targetAccountId?: string
     ) {
-        const isTransfer =
-            type.equals(TransactionType.inward_transfer()) ||
-            type.equals(TransactionType.outward_transfer())
-
-        if (isTransfer && !targetAccountId) {
+        if (type.isTransfer() && !targetAccountId) {
             throw new MissingTargetAccountError()
         }
 
-        if (!isTransfer && targetAccountId) {
+        if (!type.isTransfer() && targetAccountId) {
             throw new TargetAccountNotAllowedError()
         }
 
         return new Transaction(id, type, amount, accountId, targetAccountId)
+    }
+
+    public changeType(updateType: TransactionType, targetAccountId?: string) {
+        if (updateType.isTransfer() && targetAccountId == undefined) {
+            throw new TargetAccountNotDefinedError()
+        }
+
+        if (!updateType.isTransfer() && targetAccountId !== undefined) {
+            throw new TargetAccountNotAllowedError()
+        }
+
+        if (updateType.isTransfer() && this.type.isTransfer() && this.targetAccountId != targetAccountId) {
+                throw new DifferentTargetAccountIdError()
+            }
+        this.targetAccountId = targetAccountId
+        this.type = updateType
     }
 }
