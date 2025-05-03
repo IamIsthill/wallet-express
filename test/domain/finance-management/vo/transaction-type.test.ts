@@ -41,4 +41,16 @@ describe('TransactionType', () => {
         expect(t1.equals(t2)).toBe(false)
         expect(t1.equals(TransactionType.expense())).toBe(true)
     })
+
+    it('should test if transaction type is transfer', () => {
+        const t1 = TransactionType.income()
+        const t2 = TransactionType.expense()
+        const t3 = TransactionType.inward_transfer()
+        const t4 = TransactionType.outward_transfer()
+
+        expect(t1.isTransfer()).toBe(false)
+        expect(t2.isTransfer()).toBe(false)
+        expect(t3.isTransfer()).toBe(true)
+        expect(t4.isTransfer()).toBe(true)
+    })
 })

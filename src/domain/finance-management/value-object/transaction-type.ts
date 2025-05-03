@@ -24,6 +24,12 @@ export class TransactionType {
         return new TransactionType(value)
     }
 
+    public isTransfer() {
+        return (
+            this.value == 'inward_transfer' || this.value == 'outward_transfer'
+        )
+    }
+
     equals(other: TransactionType) {
         return other.value == this.value
     }
