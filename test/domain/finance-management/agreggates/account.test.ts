@@ -1,14 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import {
-    Account,
-    Balance,
-    TransactionType,
-} from '../../../../src/domain/finance-management'
+import { Account, Balance } from '../../../../src/domain/finance-management'
 import {
     EntityNotPersistedError,
     InsufficientFundsError,
     InvalidTransferTargetError,
-    MissingTargetAccountError,
 } from '../../../../src/domain/shared/errors'
 
 describe('Account', () => {
@@ -36,13 +31,6 @@ describe('Account', () => {
         const balance = Balance.create(1000)
         const account = new Account(undefined, 'My Account', balance)
 
-        expect(() =>
-            account.changeTransactionTypeOf(
-                'id',
-                TransactionType.expense(),
-                'id'
-            )
-        ).toThrow(EntityNotPersistedError)
         expect(() => account.deposit(100)).toThrow(EntityNotPersistedError)
         expect(() => account.withdraw(100)).toThrow(EntityNotPersistedError)
         expect(() => account.transferFunds(100, '1')).toThrow(
@@ -85,7 +73,7 @@ describe('Account', () => {
         const tx = account.transferFunds(100, '2')
 
         expect(account.balance.value).toBe(400)
-        expect(tx.type.value).toBe('transfer')
+        expect(tx.type.value).toBe('outward_transfer')
         expect(tx.targetAccountId).toBe('2')
     })
 
@@ -102,41 +90,8 @@ describe('Account', () => {
         const tx = account.recieveTransfer(200, '1')
 
         expect(account.balance.value).toBe(500)
-        expect(tx.type.value).toBe('transfer')
+        expect(tx.type.value).toBe('inward_transfer')
         expect(tx.targetAccountId).toBe('1')
-    })
-
-    it('should change transaction type to transfer with target id', () => {
-        const account = new Account('1', 'Test', Balance.create(500))
-        const tx = account.deposit(100)
-        const updatedTx = account.changeTransactionTypeOf(
-            tx.id!,
-            TransactionType.transfer(),
-            '2'
-        )
-
-        expect(updatedTx?.type.value).toBe('transfer')
-        expect(updatedTx?.targetAccountId).toBe('2')
-    })
-
-    it('should not update if transaction is not found', () => {
-        const account = new Account('1', 'Test', Balance.create(500))
-        const result = account.changeTransactionTypeOf(
-            'non-existent',
-            TransactionType.transfer(),
-            '2'
-        )
-
-        expect(result).toBeUndefined()
-    })
-
-    it('should throw error if transfer type is missing target account', () => {
-        const account = new Account('1', 'Test', Balance.create(500))
-        const tx = account.deposit(100)
-
-        expect(() =>
-            account.changeTransactionTypeOf(tx.id!, TransactionType.transfer())
-        ).toThrow(MissingTargetAccountError)
     })
 
     it('should set hydrated transactions and transactionIds correctly', () => {

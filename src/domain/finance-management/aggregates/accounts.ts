@@ -2,6 +2,7 @@ import {
     EntityNotPersistedError,
     InvalidTransferTargetError,
     MissingTargetAccountError,
+    TransactionNotFoundError,
 } from '../../shared/errors'
 import { Transaction } from '../entities'
 import { TransactionType, Amount, Balance } from '../value-object'
@@ -71,7 +72,7 @@ export class Account {
         this.decreaseBalance(amt)
 
         return this.createTransaction(
-            TransactionType.transfer(),
+            TransactionType.outward_transfer(),
             amt,
             targetAccountId
         )
@@ -86,66 +87,44 @@ export class Account {
         this.increaseBalance(amt)
 
         return this.createTransaction(
-            TransactionType.transfer(),
+            TransactionType.inward_transfer(),
             amt,
             sourceAccountId
         )
     }
 
-    public changeTransactionTypeOf(
-        transactionId: string,
-        changeType: TransactionType,
-        targetTransferAccountId?: string
-    ) {
-        this.ensureIdExists()
-        const transactionToUpdate = this.findTransaction(transactionId)
-        if (!transactionToUpdate) {
-            return
-        }
-        return this.updateTransactionType(
-            transactionToUpdate,
-            changeType,
-            targetTransferAccountId
-        )
+    public rollbackBalance(transaction: Transaction) {
+        const rollbackAmount = transaction.amount.negate()
+        this.balance = this.balance.apply(rollbackAmount)
     }
 
-    private updateTransactionType(
-        transactionToUpdate: Transaction,
-        changedType: TransactionType,
-        targetTransferAccountId?: string
-    ) {
-        transactionToUpdate.targetAccountId = undefined
-
-        if (changedType.equals(TransactionType.transfer())) {
-            this.ensureTargetProvided(targetTransferAccountId)
-            this.ensureDifferentAccounts(targetTransferAccountId!)
-            transactionToUpdate.targetAccountId = targetTransferAccountId
-        }
-
-        transactionToUpdate.type = changedType
-        return transactionToUpdate
+    public applyBalanceChange(amount: Amount) {
+        this.balance = this.balance.apply(amount)
     }
 
-    private ensureDifferentAccounts(targetAccountId: string) {
+    public ensureDifferentAccounts(targetAccountId: string) {
         if (this.id === targetAccountId) {
             throw new InvalidTransferTargetError()
         }
     }
 
-    private ensureTargetProvided(targetTransferAccountId?: string) {
+    public ensureTargetProvided(targetTransferAccountId?: string) {
         if (!targetTransferAccountId) {
             throw new MissingTargetAccountError()
         }
     }
 
-    private findTransaction(transactionId: string): Transaction | undefined {
+    public findTransaction(transactionId: string): Transaction {
         const transaction = this.hydratedTransactions.find(
             (item) => item.id == transactionId
         )
+        if (!transaction) {
+            throw new TransactionNotFoundError(transactionId)
+        }
         return transaction
     }
 
-    private ensureIdExists() {
+    public ensureIdExists() {
         if (!this.id) {
             throw new EntityNotPersistedError()
         }

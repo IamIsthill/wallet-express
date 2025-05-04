@@ -30,4 +30,19 @@ export class Amount {
     public negate(): Amount {
         return new Amount(-this._value)
     }
+
+    static normalizeAmountForType(amount: Amount, type: string): Amount {
+        const shouldBePositive = type == 'income' || type == 'inward_transfer'
+        const shouldBeNegative = type == 'expense' || type == 'outward_transfer'
+
+        if (shouldBeNegative && amount.isPositive()) {
+            return amount.negate()
+        }
+
+        if (shouldBePositive && amount.isNegative()) {
+            return amount.negate()
+        }
+
+        return amount
+    }
 }

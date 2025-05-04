@@ -58,3 +58,28 @@ export class EntityNotPersistedError extends DomainError {
         this.name = 'EntityNotPersistedError'
     }
 }
+
+export class SameTransactionTypeUpdateError extends DomainError {
+    constructor() {
+        super(
+            'Updating existing transaction type to the same type is not allowed'
+        )
+        this.name = 'SameTransactionTypeUpdateError'
+    }
+}
+
+export class DifferentTargetAccountIdError extends DomainError {
+    constructor() {
+        super(
+            'For transfer transactions, provided target account id must be equal to the old transaction'
+        )
+        this.name = 'DifferentTargetAccountIdError'
+    }
+}
+
+export class TargetAccountNotDefinedError extends DomainError {
+    constructor() {
+        super('Target account id must be provided for transfer transactions')
+        this.name = 'TargetAccountNotDefinedError'
+    }
+}
