@@ -1,7 +1,8 @@
 import express from 'express'
 import http from 'node:http'
 import { accountRouter } from '../interfaces/http'
-import { errorHandler } from '../infrastructure/middleware'
+import { errorHandler, requestLogger } from '../infrastructure/middleware'
+import { ConsoleLogger } from '../infrastructure/logger'
 import 'dotenv/config'
 import { sequelize } from '../infrastructure/postgre'
 import { ENVIRONMENT } from '../config'
@@ -17,6 +18,7 @@ try {
 }
 
 app.use(express.json())
+app.use(requestLogger(new ConsoleLogger()))
 app.use('/v1/accounts', accountRouter)
 app.use(errorHandler)
 
