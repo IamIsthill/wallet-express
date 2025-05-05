@@ -19,6 +19,7 @@ export default defineConfig([
     {
         rules: {
             'unicorn/better-regex': 'warn',
+            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
         },
         ignores: [
             "src/infrastructure/mongo/repositories/mongo-account-repository.ts",
