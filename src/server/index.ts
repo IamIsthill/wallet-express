@@ -4,10 +4,10 @@ import { accountRouter } from '../interfaces/http'
 import { errorHandler } from '../infrastructure/middleware'
 import 'dotenv/config'
 import { sequelize } from '../infrastructure/postgre'
+import { ENVIRONMENT } from '../config'
 
 const app = express()
 const server = http.createServer(app)
-const PORT = process.env.PORT || 3000
 
 try {
     console.log('Syncing databases...')
@@ -20,6 +20,6 @@ app.use(express.json())
 app.use('/v1/accounts', accountRouter)
 app.use(errorHandler)
 
-server.listen(PORT, () => {
-    console.log(`Wallet Server listening on port ${PORT}`)
+server.listen(ENVIRONMENT.PORT, () => {
+    console.log(`Wallet Server listening on port ${ENVIRONMENT.PORT}`)
 })
