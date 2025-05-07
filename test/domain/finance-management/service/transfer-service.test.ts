@@ -85,8 +85,8 @@ describe('TransferService', () => {
         })
     })
 
-    it('should throw error if target and source is the same', () => {
-        expect(() =>
+    it('should throw error if target and source is the same', async () => {
+        await expect(() =>
             service.transfer({
                 sourceAccountId: '1',
                 targetAccountId: '1',
@@ -95,11 +95,11 @@ describe('TransferService', () => {
         ).rejects.toThrow(InvalidTransferTargetError)
     })
 
-    it('should throw error if accounts are not found', () => {
+    it('should throw error if accounts are not found', async () => {
         const account = undefined
         ;(mockAccountRepository.getById as Mock).mockResolvedValue(account)
 
-        expect(() =>
+        await expect(() =>
             service.transfer({
                 sourceAccountId: 'non-existent1',
                 targetAccountId: 'non-existent2',
