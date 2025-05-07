@@ -1,3 +1,2 @@
-export * from './request.dto'
-export * from './response.dto'
-export * from './service'
+export { WithdrawFromAccountDto } from './withdraw-from-account.dto'
+export { WithdrawFromAccountService } from './withdraw-from-account.service'

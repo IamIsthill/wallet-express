@@ -1,6 +1,8 @@
-import { WithdrawFromAccountService } from './service'
-import { WithdrawFromAccountDto } from './request.dto'
-import { WithdrawFromAccountResponseDto } from './response.dto'
+import { WithdrawFromAccountService } from './withdraw-from-account.service'
+import {
+    WithdrawFromAccountDto,
+    WithdrawFromAccountResponseDto,
+} from './withdraw-from-account.dto'
 import { describe, it, expect, vi, Mock, beforeEach } from 'vitest'
 import {
     mockAccountRepository,
