@@ -82,7 +82,8 @@ describe('WithdrawFromAccountService', () => {
     })
 
     it('should throw AccountNotFoundError', async () => {
-        ;(mockAccountRepository.getById as Mock).mockResolvedValue()
+        const error = undefined
+        ;(mockAccountRepository.getById as Mock).mockResolvedValue(error)
 
         await expect(service.use(dto)).rejects.toThrow(AccountNotFoundError)
     })
