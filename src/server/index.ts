@@ -1,27 +1,41 @@
-import express from 'express'
-import http from 'node:http'
-import { accountRouter } from '../interfaces/http'
-import { errorHandler, requestLogger } from '../infrastructure/middleware'
-import { ConsoleLogger } from '../infrastructure/logger'
-import 'dotenv/config'
-import { sequelize } from '../infrastructure/postgre'
+import { createServer } from 'node:http'
+import { createApp } from './app'
+import { bootstrap } from './bootstrap'
 import { ENVIRONMENT } from '../config'
+import { ConsoleLogger } from '../infrastructure/logger'
 
-const app = express()
-const server = http.createServer(app)
+const logger = new ConsoleLogger()
 
-try {
-    console.log('Syncing databases...')
-    sequelize.sync()
-} catch (error) {
-    console.log('Error syncinc databases:', error)
+async function startApp() {
+    try {
+        await bootstrap()
+
+        const app = createApp()
+        const server = createServer(app)
+
+        server.listen(ENVIRONMENT.PORT, () => {
+            logger.info(`Wallet Server listening on port ${ENVIRONMENT.PORT}`)
+        })
+
+        const shutdown = () => {
+            logger.info('Starting graceful shutdown...')
+            server.close(() => {
+                logger.info('Server closed successfully')
+            })
+        }
+
+        //OS sends signal for app to end
+        process.on('SIGTERM', shutdown)
+        process.on('SIGINT', shutdown)
+    } catch (error) {
+        // Automatically terminate sessionif app failed to start
+        logger.error('Failed to start application', { error })
+    }
 }
 
-app.use(express.json())
-app.use(requestLogger(new ConsoleLogger()))
-app.use('/v1/accounts', accountRouter)
-app.use(errorHandler)
+startApp()
 
-server.listen(ENVIRONMENT.PORT, () => {
-    console.log(`Wallet Server listening on port ${ENVIRONMENT.PORT}`)
+// Top Level Error catcher
+process.on('unhandledRejection', (reason) => {
+    logger.error('Unhandled rejection', { reason })
 })
