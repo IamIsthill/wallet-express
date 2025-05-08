@@ -26,7 +26,7 @@ async function startApp() {
         process.on('SIGTERM', shutdown)
         process.on('SIGINT', shutdown)
     } catch (error) {
-        // Automatically terminate sessionif app failed to start
+        // Automatically terminate session if app failed to start
         logger.error('Failed to start application', { error })
     }
 }
