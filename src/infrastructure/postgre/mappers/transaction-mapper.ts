@@ -2,6 +2,7 @@ import {
     Transaction,
     Amount,
     TransactionType,
+    TransactionTypeEnum,
 } from '../../../domain/finance-management'
 // import { ITransactionModel } from '../interface'
 import { TransactionModel } from '../models'
@@ -12,7 +13,7 @@ export const TransactionMapper = {
 
         const transaction = new Transaction(
             id,
-            TransactionType._create(type),
+            TransactionType._create(type as TransactionTypeEnum),
             Amount.create(amount),
             accountId,
             targetAccountId || undefined

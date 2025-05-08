@@ -8,6 +8,7 @@ import {
     NonAttribute,
 } from 'sequelize'
 import { AccountModel } from './account-model'
+import { TransactionTypeEnum } from '../../../domain/finance-management'
 
 export class TransactionModel extends Model<
     InferAttributes<TransactionModel>,
@@ -16,7 +17,7 @@ export class TransactionModel extends Model<
     declare id: CreationOptional<string>
     declare accountId: string
     declare targetAccountId?: string
-    declare type: 'transfer' | 'income' | 'expense'
+    declare type: TransactionTypeEnum
     declare amount: number
     declare targetAccount?: NonAttribute<AccountModel>
     declare account: NonAttribute<AccountModel>
@@ -41,7 +42,12 @@ TransactionModel.init(
             allowNull: true,
         },
         type: {
-            type: DataTypes.ENUM('income', 'transfer', 'expense'),
+            type: DataTypes.ENUM(
+                'income',
+                'inward_transfer',
+                'outward_transfer',
+                'expense'
+            ),
             allowNull: false,
         },
         amount: {
