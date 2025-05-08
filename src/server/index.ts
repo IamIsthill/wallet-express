@@ -2,9 +2,7 @@ import { createServer } from 'node:http'
 import { createApp } from './app'
 import { bootstrap } from './bootstrap'
 import { ENVIRONMENT } from '../config'
-import { ConsoleLogger } from '../infrastructure/logger'
-
-const logger = new ConsoleLogger()
+import { logger } from '../infrastructure/logger'
 
 async function startApp() {
     try {

@@ -1,7 +1,5 @@
 import { sequelize } from '../infrastructure/postgre'
-import { ConsoleLogger } from '../infrastructure/logger'
-
-const logger = new ConsoleLogger()
+import { logger } from '../infrastructure/logger'
 
 export async function bootstrap() {
     logger.info('Syncing databases...')
