@@ -19,6 +19,7 @@ export default defineConfig([
     {
         rules: {
             'unicorn/better-regex': 'warn',
+            'unicorn/prefer-top-level-await': 'off',
             '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
         },
         ignores: [
