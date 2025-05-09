@@ -8,6 +8,7 @@ accountRouter.get('/:accountId', controller.getAccount)
 accountRouter.delete('/:accountId', controller.deleteAccount)
 accountRouter.patch('/:accountId', controller.updateAccount)
 accountRouter.post('/:accountId/deposit', controller.depositToAccount)
+accountRouter.post('/:accountId/withdraw', controller.withdrawFromAccount)
 accountRouter.get('/:accountId/transactions', controller.getAccountTransactions)
 accountRouter.get(
     '/:accountId/transactions/:transactionId',
