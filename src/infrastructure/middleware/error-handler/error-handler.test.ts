@@ -1,11 +1,10 @@
-import { Logger } from '../../../application/shared'
 import { errorHandler } from './error-handler'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AppError } from '../../../interfaces/http/errors'
 import { Request, Response } from 'express'
+import { mockLogger } from '../../shared/test'
 
 describe('errorHandler', () => {
-    let mockLogger: Logger
     const next = vi.fn()
     const request = { id: 'requestId' } as Request
     const response = {
@@ -15,13 +14,6 @@ describe('errorHandler', () => {
 
     beforeEach(() => {
         vi.clearAllMocks()
-        mockLogger = {
-            debug: vi.fn(),
-            error: vi.fn(),
-            info: vi.fn(),
-            warn: vi.fn(),
-            withContext: vi.fn(),
-        }
     })
     it('handles AppError and logs it', () => {
         const error = new AppError('Something went wrong', 400, false)
