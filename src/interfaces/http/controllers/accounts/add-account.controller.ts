@@ -2,11 +2,10 @@ import {
     CreateAccountService,
     CreateAccountDto,
 } from '../../../../application/finance-management'
-import { BadRequestError } from '../../errors'
-import { ServiceError } from '../../../../utils/errors'
 import { NextFunction, Request, Response } from 'express'
 import { codes } from '../../../../utils/lib'
 import { PostgreUnitWork } from '../../../../infrastructure/postgre'
+import { handleServiceError } from '../../errors'
 
 export const addAccount = async (
     request: Request,
@@ -20,9 +19,6 @@ export const addAccount = async (
         const createdAccount = await service.use(dto)
         response.status(codes.CREATED).json(createdAccount)
     } catch (error: unknown) {
-        if (error instanceof ServiceError) {
-            next(new BadRequestError(error.message))
-        }
-        next(error)
+        return handleServiceError(error, next)
     }
 }

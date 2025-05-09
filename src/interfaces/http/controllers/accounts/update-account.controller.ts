@@ -4,10 +4,8 @@ import {
 } from '../../../../application/finance-management'
 import { NextFunction, Request, Response } from 'express'
 import { codes } from '../../../../utils/lib'
-import { ServiceError } from '../../../../utils/errors'
-import { AccountNotFoundError } from '../../../../application/shared/errors'
-import { NotFoundError, BadRequestError } from '../../errors'
 import { PostgreAccountRepository } from '../../../../infrastructure/postgre'
+import { handleServiceError } from '../../errors'
 
 export const updateAccount = async (
     request: Request,
@@ -23,11 +21,6 @@ export const updateAccount = async (
         const account = await service.use(dto)
         response.status(codes.OK).json(account)
     } catch (error: unknown) {
-        if (error instanceof AccountNotFoundError) {
-            next(new NotFoundError(error.message))
-        } else if (error instanceof ServiceError) {
-            next(new BadRequestError(error.message))
-        }
-        next(error)
+        return handleServiceError(error, next)
     }
 }

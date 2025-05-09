@@ -4,10 +4,8 @@ import {
 } from '../../../../application/finance-management'
 import { NextFunction, Request, Response } from 'express'
 import { codes } from '../../../../utils/lib'
-import { BadRequestError, NotFoundError } from '../../errors'
-import { ServiceError } from '../../../../utils/errors'
-import { AccountNotFoundError } from '../../../../application/shared/errors'
 import { PostgreAccountRepository } from '../../../../infrastructure/postgre'
+import { handleServiceError } from '../../errors'
 
 export const deleteAccount = async (
     request: Request,
@@ -24,11 +22,6 @@ export const deleteAccount = async (
         await service.use(dto)
         response.sendStatus(codes.NO_CONTENT)
     } catch (error) {
-        if (error instanceof AccountNotFoundError) {
-            next(new NotFoundError(error.message))
-        } else if (error instanceof ServiceError) {
-            next(new BadRequestError(error.message))
-        }
-        next(error)
+        return handleServiceError(error, next)
     }
 }

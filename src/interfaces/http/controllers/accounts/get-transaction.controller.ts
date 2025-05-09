@@ -3,11 +3,9 @@ import {
     GetTransactionDto,
 } from '../../../../application/finance-management'
 import { Response, Request, NextFunction } from 'express'
-import { AccountNotFoundError } from '../../../../application/shared/errors'
-import { BadRequestError, NotFoundError } from '../../errors'
-import { ServiceError } from '../../../../utils/errors'
 import { PostgreTransactionRepository } from '../../../../infrastructure/postgre'
 import { codes } from '../../../../utils/lib'
+import { handleServiceError } from '../../errors'
 
 export const getTransaction = async (
     request: Request,
@@ -24,11 +22,6 @@ export const getTransaction = async (
         const result = await service.use(dto)
         response.status(codes.OK).json(result)
     } catch (error) {
-        if (error instanceof AccountNotFoundError) {
-            next(new NotFoundError(error.message))
-        } else if (error instanceof ServiceError) {
-            next(new BadRequestError(error.message))
-        }
-        next(error)
+        return handleServiceError(error, next)
     }
 }

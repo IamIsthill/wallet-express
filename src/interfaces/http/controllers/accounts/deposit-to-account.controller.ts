@@ -4,10 +4,8 @@ import {
 } from '../../../../application/finance-management'
 import { NextFunction, Request, Response } from 'express'
 import { codes } from '../../../../utils/lib'
-import { AccountNotFoundError } from '../../../../application/shared/errors'
-import { ServiceError } from '../../../../utils/errors'
-import { BadRequestError, NotFoundError } from '../../errors'
 import { PostgreUnitWork } from '../../../../infrastructure/postgre'
+import { handleServiceError } from '../../errors'
 
 export const depositToAccount = async (
     request: Request,
@@ -30,12 +28,6 @@ export const depositToAccount = async (
             response.status(codes.CREATED).json(depositTransaction)
         })
     } catch (error: unknown) {
-        if (error instanceof AccountNotFoundError) {
-            next(new NotFoundError(error.message))
-        } else if (error instanceof ServiceError) {
-            next(new BadRequestError(error.message))
-        } else {
-            next(error)
-        }
+        return handleServiceError(error, next)
     }
 }
