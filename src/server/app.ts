@@ -4,6 +4,7 @@ import {
     errorHandler,
     requestLogger,
     attachRequestId,
+    attachLogger,
 } from '../infrastructure/middleware'
 import { logger } from '../infrastructure/logger'
 
@@ -12,6 +13,7 @@ export function createApp() {
 
     app.use(express.json())
     app.use(attachRequestId)
+    app.use(attachLogger(logger))
     app.use(requestLogger(logger))
     app.use('/v1/accounts', accountRouter)
     app.use(errorHandler(logger))
